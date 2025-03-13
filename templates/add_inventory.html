@@ -2,7 +2,16 @@
 
 {% block content %}
 <div class="container">
-    <form id="inventoryForm" class="inventory-form" enctype="multipart/form-data" method="post">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-danger">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    <form id="inventoryForm" class="inventory-form" method="post" enctype="multipart/form-data">
+        {{ form.csrf_token }}
         <div class="form-section">
             <h2 class="section-title">
                 <i class="fas fa-info-circle"></i>
@@ -36,12 +45,12 @@
 
                 <div class="form-group">
                     <label for="productName">Product Name</label>
-                    <input type="text" id="productName" required placeholder="Enter product name">
+                    <input type="text" id="productName" name="name" required placeholder="Enter product name">
                 </div>
 
                 <div class="form-group">
                     <label for="category">Category</label>
-                    <select id="category" required>
+                    <select id="category" name="category" required>
                         <option value="">Select category</option>
                         <option value="electronics">Electronics</option>
                         <option value="automotive">Automotive</option>
@@ -52,17 +61,17 @@
 
                 <div class="form-group">
                     <label for="subCategory">Sub-Category</label>
-                    <input type="text" id="subCategory" required placeholder="Enter sub-category">
+                    <input type="text" id="subCategory" name="sub_category" required placeholder="Enter sub-category">
                 </div>
 
                 <div class="form-group">
                     <label for="tag">Tags</label>
-                    <input type="text" id="tag" placeholder="Enter tags (comma separated)">
+                    <input type="text" id="tag" name="tags" placeholder="Enter tags (comma separated)">
                 </div>
 
                 <div class="form-group">
                     <label for="sku">SKU</label>
-                    <input type="text" id="sku" required placeholder="Enter SKU">
+                    <input type="text" id="sku" name="sku" required placeholder="Enter SKU">
                 </div>
             </div>
         </div>
@@ -75,12 +84,12 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label for="origin">Origin</label>
-                    <input type="text" id="origin" required placeholder="Country of origin">
+                    <input type="text" id="origin" name="origin" required placeholder="Country of origin">
                 </div>
 
                 <div class="form-group">
                     <label for="supplier">Supplier</label>
-                    <select id="supplier" required>
+                    <select id="supplier" name="supplier" required>
                         <option value="">Select supplier</option>
                         <option value="supplier1">Supplier 1</option>
                         <option value="supplier2">Supplier 2</option>
@@ -89,12 +98,12 @@
 
                 <div class="form-group">
                     <label for="owner">Owner</label>
-                    <input type="text" id="owner" required placeholder="Product owner">
+                    <input type="text" id="owner" name="owner" required placeholder="Product owner">
                 </div>
 
                 <div class="form-group">
                     <label for="brand">Brand</label>
-                    <input type="text" id="brand" required placeholder="Product brand">
+                    <input type="text" id="brand" name="brand" required placeholder="Product brand">
                 </div>
             </div>
         </div>
@@ -107,19 +116,19 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label for="stock">Stock Quantity</label>
-                    <input type="number" id="stock" min="0" required placeholder="Available quantity">
+                    <input type="number" id="stock" name="stock" min="0" required placeholder="Available quantity">
                 </div>
 
                 <div class="form-group">
                     <label for="minStock">Minimum Stock Level</label>
-                    <input type="number" id="minStock" min="0" required placeholder="Alert threshold">
+                    <input type="number" id="minStock" name="min_stock" min="0" required placeholder="Alert threshold">
                 </div>
 
                 <div class="form-group">
                     <label for="landingCost">Landing Cost</label>
                     <div class="input-group">
                         <span class="input-addon">$</span>
-                        <input type="number" id="landingCost" step="0.01" min="0" required placeholder="0.00">
+                        <input type="number" id="landingCost" name="landing_cost" step="0.01" min="0" required placeholder="0.00">
                     </div>
                 </div>
 
@@ -127,18 +136,18 @@
                     <label for="sellingPrice">Selling Price</label>
                     <div class="input-group">
                         <span class="input-addon">$</span>
-                        <input type="number" id="sellingPrice" step="0.01" min="0" required placeholder="0.00">
+                        <input type="number" id="sellingPrice" name="price" step="0.01" min="0" required placeholder="0.00">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="location">Storage Location</label>
-                    <input type="text" id="location" required placeholder="Warehouse location">
+                    <input type="text" id="location" name="location" required placeholder="Warehouse location">
                 </div>
 
                 <div class="form-group">
                     <label for="condition">Condition</label>
-                    <select id="condition" required>
+                    <select id="condition" name="condition" required>
                         <option value="new">New</option>
                         <option value="used">Used</option>
                         <option value="refurbished">Refurbished</option>
@@ -155,32 +164,32 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label for="application">Application</label>
-                    <input type="text" id="application" placeholder="Product application">
+                    <input type="text" id="application" name="application" placeholder="Product application">
                 </div>
 
                 <div class="form-group">
                     <label for="partNumber">Part Number</label>
-                    <input type="text" id="partNumber" required placeholder="Manufacturer part number">
+                    <input type="text" id="partNumber" name="part_number" required placeholder="Manufacturer part number">
                 </div>
 
                 <div class="form-group">
                     <label for="oemNumber">OEM Number</label>
-                    <input type="text" id="oemNumber" placeholder="OEM reference number">
+                    <input type="text" id="oemNumber" name="oem_number" placeholder="OEM reference number">
                 </div>
 
                 <div class="form-group full-width">
                     <label for="description">Description</label>
-                    <textarea id="description" rows="3" placeholder="Detailed product description"></textarea>
+                    <textarea id="description" name="description" rows="3" placeholder="Detailed product description"></textarea>
                 </div>
 
                 <div class="form-group">
                     <label for="warranty">Warranty Period</label>
-                    <input type="text" id="warranty" placeholder="e.g., 12 months">
+                    <input type="text" id="warranty" name="warranty" placeholder="e.g., 12 months">
                 </div>
 
                 <div class="form-group">
                     <label for="certification">Certifications</label>
-                    <input type="text" id="certification" placeholder="e.g., ISO, CE">
+                    <input type="text" id="certification" name="certifications" placeholder="e.g., ISO, CE">
                 </div>
             </div>
         </div>

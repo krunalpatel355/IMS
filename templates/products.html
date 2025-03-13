@@ -29,11 +29,11 @@
             <tbody>
                 {% for item in inventory %}
                 <tr>
-                    <td><img src="{{ url_for('static', filename=item.photo) }}" alt="{{ item.name }}"></td>
-                    <td><a href="{{ url_for('product_detail', id=item.id) }}" class="product-name">{{ item.name }}</a></td>
+                    <td><img src="{{ url_for('static', filename='uploads/' + (item.photo or 'product1.jpg')) }}" alt="{{ item.name }}"></td>
+                    <td><a href="{{ url_for('product_detail', product_id=item._id) }}" class="product-name">{{ item.name }}</a></td>
                     <td>{{ item.brand }}</td>
                     <td>{{ item.owner }}</td>
-                    <td>${{ "%.2f"|format(item.cost) }}</td>
+                    <td>${{ "%.2f"|format(item.cost if item.cost is defined else 0.00) }}</td>
                     <td>{{ item.rising }}</td>
                     <td>{{ item.application }}</td>
                     <td>

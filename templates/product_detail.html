@@ -2,31 +2,43 @@
 
 {% block content %}
 <div class="product-detail-container">
-    <h1>{{ product.name }}</h1>
+    <h1>{{ product.name if product and product.name else 'Product Not Found' }}</h1>
     
     <div class="split-view">
         <div class="left-panel">
             <h2>Product Information</h2>
+            {% if product %}
             <div class="detail-item">
                 <label>Name:</label>
                 <span>{{ product.name }}</span>
             </div>
             <div class="detail-item">
                 <label>Brand:</label>
-                <span>{{ product.brand }}</span>
+                <span>{{ product.brand if product.brand is defined else 'N/A' }}</span>
             </div>
             <div class="detail-item">
                 <label>Part Number:</label>
-                <span>{{ product.part_number }}</span>
+                <span>{{ product.part_number if product.part_number is defined else 'N/A' }}</span>
             </div>
             <div class="detail-item">
                 <label>Application:</label>
-                <span>{{ product.application }}</span>
+                <span>{{ product.application if product.application is defined else 'N/A' }}</span>
             </div>
             <div class="detail-item">
                 <label>Description:</label>
-                <p>{{ product.description }}</p>
+                <p>{{ product.description if product.description is defined else 'No description available.' }}</p>
             </div>
+            <div class="detail-item">
+                <label>Stock:</label>
+                <span>{{ product.stock if product.stock is defined else 0 }}</span>
+            </div>
+            <div class="detail-item">
+                <label>Price:</label>
+                <span>${{ "%.2f"|format(product.price if product.price is defined else 0.00) }}</span>
+            </div>
+            {% else %}
+            <p>Product information not available.</p>
+            {% endif %}
         </div>
         
         <div class="right-panel">
@@ -37,6 +49,10 @@
                     <div class="customer-item">{{ customer.name }}</div>
                     {% endfor %}
                 </div>
+            </div>
+
+            <div class="actions">
+                <a href="{{ url_for('inventory_page') }}" class="btn-primary">Back to Inventory</a>
             </div>
         </div>
     </div>

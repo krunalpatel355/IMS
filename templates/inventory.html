@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-
 {% block content %}
 <div class="inventory-container">
     <h1>Inventory</h1>
@@ -27,11 +26,11 @@
             <tbody>
                 {% for item in inventory %}
                 <tr>
-                    <td><img src="{{ url_for('static', filename=item.photo) }}" alt="{{ item.name }}"></td>
-                    <td><a href="{{ url_for('product_detail', id=item.id) }}" class="product-name">{{ item.name }}</a></td>
+                    <td><img src="{{ url_for('static', filename='uploads/' + (item.photo or 'product1.jpg')) }}" alt="{{ item.name }}"></td>
+                    <td><a href="{{ url_for('product_detail', product_id=item._id) }}" class="product-name">{{ item.name }}</a></td>
                     <td>{{ item.brand }}</td>
                     <td>{{ item.stock }}</td>
-                    <td>${{ "%.2f"|format(item.price) }}</td>
+                    <td>${{ "%.2f"|format(item.price if item.price is defined else 0.00) }}</td>
                     <td>{{ item.part_number }}</td>
                     <td>
                         <a href="{{ url_for('edit_inventory', item_id=item._id) }}" class="edit-btn awesome-btn">Edit</a>
@@ -43,7 +42,6 @@
         </table>
     </div>
 </div>
-
 <script>
 document.getElementById('inventorySearch').addEventListener('keyup', function() {
     let searchText = this.value.toLowerCase();
