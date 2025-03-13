@@ -2,6 +2,10 @@
 venv/
 env/
 ENV/
+.env
+.venv
+env.bak/
+venv.bak/
 
 # Python
 __pycache__/
@@ -24,9 +28,10 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-
-# Environment variables
-.env
+MANIFEST
+.pytest_cache/
+.coverage
+htmlcov/
 
 # IDE specific files
 .idea/
@@ -34,13 +39,27 @@ wheels/
 *.swp
 *.swo
 .DS_Store
+*.sublime-project
+*.sublime-workspace
 
 # Database
 *.db
 *.sqlite3
+*.sqlite
 
-# Logs
+# Logs and media
 *.log
-
-#images
 static/uploads/*
+logs/
+media/
+
+# Local development settings
+instance/
+.webassets-cache/
+local_settings.py
+
+# Distribution / packaging
+.Python
+*.pyc
+*.pyo
+*.pyd

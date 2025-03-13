@@ -28,12 +28,19 @@ A Flask-based Inventory Management System for tracking products, customers, and 
 ## Technology Stack
 
 - Python 3.x
-- Flask 2.0.1
-- Flask-WTF 1.0.0 (for CSRF protection)
-- python-dotenv 0.19.0
-- bson 0.5.10
+- Flask 2.3.3
+- Flask-WTF 1.1.1
+- Python-dotenv 1.0.0
+- MongoDB support (via pymongo 4.5.0)
+- Gunicorn 21.2.0 for production deployment
 - HTML/CSS
 - JavaScript
+
+## Prerequisites
+
+- Python 3.8 or higher
+- pip (Python package installer)
+- Git
 
 ## Installation
 
@@ -57,12 +64,23 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-4. Run the application:
-```bash
-python main.py
+4. Create a .env file in the project root:
+```
+FLASK_APP=main.py
+FLASK_ENV=development
+SECRET_KEY=your-secret-key-here
 ```
 
-The application will be available at `http://localhost:5000`
+5. Run the application:
+```bash
+# Development
+python main.py
+
+# Production
+gunicorn main:app
+```
+
+The application will be available at `http://localhost:5000` (development) or `http://localhost:8000` (production)
 
 ## Project Structure
 
@@ -89,32 +107,43 @@ project/
 
 ## Configuration
 
-The application uses the following configuration:
-- Flask Secret Key (for session management and CSRF protection)
-- Debug mode enabled for development
+The application uses environment variables for configuration:
+- `FLASK_APP`: Specifies the main application file
+- `FLASK_ENV`: Set to 'development' or 'production'
+- `SECRET_KEY`: Used for session management and CSRF protection
+- `MONGO_URI`: (Optional) MongoDB connection string if using MongoDB
 
 ## Development Notes
 
-Currently, the application uses in-memory data structures (Python lists) for storing:
-- Inventory items
-- Customer information
-- Sales records
-- Purchase history
+The application currently uses in-memory data structures but is prepared for MongoDB integration:
+- Collections are defined for: Inventory, Customers, Sales, and History
+- MongoDB connection strings can be configured via environment variables
+- Commented code includes MongoDB integration patterns
 
-For production use, it's recommended to:
-1. Implement a proper database (the code includes commented MongoDB integration hints)
-2. Set up proper environment variables
-3. Configure a secure secret key
-
-## Running in Development
-
-The application runs in debug mode by default when started with:
-```bash
-python main.py
-```
+For production deployment:
+1. Set up a MongoDB database
+2. Configure proper environment variables
+3. Use a strong SECRET_KEY
+4. Deploy behind a reverse proxy (nginx recommended)
+5. Enable HTTPS
+6. Set up proper logging
 
 ## Security Features
 
-- CSRF protection enabled using Flask-WTF
-- Secure receipt number generation
-- Unique reference number generation for sales
+- CSRF protection via Flask-WTF
+- Secure session management
+- Input validation and sanitization
+- File upload restrictions
+- Unique ID generation for receipts and references
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
