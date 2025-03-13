@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="sales-container" style="padding: 2rem;max-width: 1200px;margin: 0 auto;">
+    <div class="header-section">
+        <h1>Sales Receipt</h1>
+        <a href="{{ url_for('sales_storage') }}" class="view-btn"><i class="fas fa-plus"></i> All Sale</a>
+    </div>
+    <form class="sales-form" method="POST" action="{{ url_for('sales_page') }}">
+        <div class="form-group">
+            <label>Company Name:</label>
+            <input type="text" name="company" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Email:</label>
+            <input type="email" name="email" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Product Name:</label>
+            <input type="text" name="product" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Product Price:</label>
+            <input type="number" name="price" step="0.01" required>
+        </div>
+        
+        <button type="submit" class="add-button awesome-btn">Generate Receipt</button>
+    </form>
+    
+    <div class="sales-list">
+        {% for sale in sales %}
+        <div class="sale-item">
+            <p>Company: {{ sale.company }}</p>
+            <p>Product: {{ sale.product }}</p>
+            <p>Price: ${{ "%.2f"|format(sale.price) }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="sales-storage-container">
+    <div class="header-section">
+        <h1>Sales Records</h1>
+        <a href="{{ url_for('sales_page') }}" class="view-btn"><i class="fas fa-plus"></i> New Sale</a>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="sales-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Company Name</th>
+                    <th>Email</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sale in sales %}
+                <tr>
+                    <td>{{ sale.date.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ sale.company }}</td>
+                    <td>{{ sale.email }}</td>
+                    <td class="total-column">${{ "%.2f"|format(sale.total) }}</td>
+                    <td>
+                        <a href="{{ url_for('view_sale', sale_id=sale.id) }}" class="view-btn">
+                            <i class="fas fa-eye"></i> View
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

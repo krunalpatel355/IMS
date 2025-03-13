@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="product-detail-container">
+    <h1>{{ product.name }}</h1>
+    
+    <div class="split-view">
+        <div class="left-panel">
+            <h2>Product Information</h2>
+            <div class="detail-item">
+                <label>Name:</label>
+                <span>{{ product.name }}</span>
+            </div>
+            <div class="detail-item">
+                <label>Brand:</label>
+                <span>{{ product.brand }}</span>
+            </div>
+            <div class="detail-item">
+                <label>Part Number:</label>
+                <span>{{ product.part_number }}</span>
+            </div>
+            <div class="detail-item">
+                <label>Application:</label>
+                <span>{{ product.application }}</span>
+            </div>
+            <div class="detail-item">
+                <label>Description:</label>
+                <p>{{ product.description }}</p>
+            </div>
+        </div>
+        
+        <div class="right-panel">
+            <div class="customer-search">
+                <input type="text" placeholder="Search customers...">
+                <div class="customer-list">
+                    {% for customer in customers %}
+                    <div class="customer-item">{{ customer.name }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

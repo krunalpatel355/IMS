@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="products-container">
+    <h1>Product Details</h1>
+    
+    <div class="actions-bar">
+        <div class="search-section">
+            <input type="text" id="productSearch" placeholder="Search products...">
+        </div>
+        <a href="{{ url_for('add_inventory') }}" class="add-button awesome-btn">Add New product</a>
+    </div>
+    
+    <div class="table-container">
+        <table class="modern-table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Brand</th>
+                    <th>Owner</th>
+                    <th>Cost</th>
+                    <th>Rising</th>
+                    <th>Application</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in inventory %}
+                <tr>
+                    <td><img src="{{ url_for('static', filename=item.photo) }}" alt="{{ item.name }}"></td>
+                    <td><a href="{{ url_for('product_detail', id=item.id) }}" class="product-name">{{ item.name }}</a></td>
+                    <td>{{ item.brand }}</td>
+                    <td>{{ item.owner }}</td>
+                    <td>${{ "%.2f"|format(item.cost) }}</td>
+                    <td>{{ item.rising }}</td>
+                    <td>{{ item.application }}</td>
+                    <td>
+                        <a href="{{ url_for('edit_inventory', item_id=item._id) }}" class="edit-btn awesome-btn">Edit</a>
+                        <a href="{{ url_for('delete_inventory', item_id=item._id) }}" class="delete-btn awesome-btn">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+document.getElementById('productSearch').addEventListener('keyup', function() {
+    let searchText = this.value.toLowerCase();
+    let rows = document.querySelectorAll('.modern-table tbody tr');
+    
+    rows.forEach(row => {
+        let rowText = row.textContent.toLowerCase();
+        row.style.display = rowText.includes(searchText) ? '' : 'none';
+    });
+});
+</script>
+{% endblock %}

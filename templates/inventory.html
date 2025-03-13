@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="inventory-container">
+    <h1>Inventory</h1>
+    
+    <div class="actions-bar">
+        <div class="search-section">
+            <input type="text" id="inventorySearch" placeholder="Search inventory...">
+        </div>
+        <a href="{{ url_for('add_inventory') }}" class="add-button awesome-btn">Add New Inventory</a>
+    </div>
+    
+    <div class="table-container">
+        <table class="modern-table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Brand</th>
+                    <th>Stock</th>
+                    <th>Price</th>
+                    <th>Part Number</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in inventory %}
+                <tr>
+                    <td><img src="{{ url_for('static', filename=item.photo) }}" alt="{{ item.name }}"></td>
+                    <td><a href="{{ url_for('product_detail', id=item.id) }}" class="product-name">{{ item.name }}</a></td>
+                    <td>{{ item.brand }}</td>
+                    <td>{{ item.stock }}</td>
+                    <td>${{ "%.2f"|format(item.price) }}</td>
+                    <td>{{ item.part_number }}</td>
+                    <td>
+                        <a href="{{ url_for('edit_inventory', item_id=item._id) }}" class="edit-btn awesome-btn">Edit</a>
+                        <a href="{{ url_for('delete_inventory', item_id=item._id) }}" class="delete-btn awesome-btn">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+document.getElementById('inventorySearch').addEventListener('keyup', function() {
+    let searchText = this.value.toLowerCase();
+    let rows = document.querySelectorAll('.modern-table tbody tr');
+    
+    rows.forEach(row => {
+        let text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchText) ? '' : 'none';
+    });
+});
+</script>
+{% endblock %}
