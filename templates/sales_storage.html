@@ -1,34 +1,46 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="sales-container" style="padding: 2rem;max-width: 1200px;margin: 0 auto;">
+<div class="sales-container">
     <div class="header-section">
-        <h1>Sales Records</h1>
-        <a href="{{ url_for('sales_page') }}" class="view-btn"><i class="fas fa-plus"></i> New Sale</a>
+        <h1>Sales History</h1>
+        <a href="{{ url_for('sales_page') }}" class="btn btn-primary rm-td">
+            <i class="fas fa-plus"></i> New Sale
+        </a>
     </div>
-    
+
     <div class="table-responsive">
         <table class="sales-table">
             <thead>
                 <tr>
+                    <th>Receipt #</th>
                     <th>Date</th>
-                    <th>Company Name</th>
-                    <th>Email</th>
+                    <th>Customer</th>
+                    <th>Payment Method</th>
+                    <th>Items</th>
+                    <th>Subtotal</th>
+                    <th>Discount</th>
                     <th>Total</th>
-                    <th>Action</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
                 {% for sale in sales %}
                 <tr>
-                    <td>{{ sale.date.strftime('%Y-%m-%d') }}</td>
-                    <td>{{ sale.company }}</td>
-                    <td>{{ sale.email }}</td>
+                    <td>{{ sale.receipt_number }}</td>
+                    <td>{{ sale.receipt_date }}</td>
+                    <td>{{ sale.customer }}</td>
+                    <td>{{ sale.payment_method }}</td>
+                    <td>{{ sale.items|length }} items</td>
+                    <td>${{ "%.2f"|format(sale.subtotal) }}</td>
+                    <td>${{ "%.2f"|format(sale.discount) }}</td>
                     <td class="total-column">${{ "%.2f"|format(sale.total) }}</td>
                     <td>
-                        <a href="{{ url_for('view_sale', sale_id=sale.id) }}" class="view-btn">
-                            <i class="fas fa-eye"></i> View
-                        </a>
+                        {% if sale.delivered == sale.total %}
+                            <span class="badge badge-success">Paid</span>
+                        {% else %}
+                            <span class="badge badge-warning">Pending</span>
+                        {% endif %}
                     </td>
                 </tr>
                 {% endfor %}

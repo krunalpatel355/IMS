@@ -1,8 +1,23 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify, make_response
+from flask_wtf.csrf import CSRFProtect
 from bson import ObjectId
 from datetime import datetime
+import random
+import string
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'your-secret-key-here'  # Change this to a secure secret key
+csrf = CSRFProtect(app)
+
+# Global counter for receipt numbers
+current_receipt_number = 1000
+
+def generate_reference_number():
+    """Generate a unique reference number for sales"""
+    prefix = ''.join(random.choices(string.ascii_uppercase, k=2))
+    timestamp = datetime.now().strftime('%Y%m%d')
+    suffix = ''.join(random.choices(string.digits, k=4))
+    return f"{prefix}{timestamp}{suffix}"
 
 # Sample data - In production, use a proper database
 inventory = [
@@ -85,9 +100,58 @@ def customer_history(customer_id):
                          last_purchase_date=last_purchase_date,
                          active='customers')
 
-@app.route('/sales')
+@app.route('/get_next_receipt_number')
+def get_next_receipt_number():
+    global current_receipt_number
+    current_receipt_number += 1
+    return jsonify({'receipt_number': current_receipt_number})
+
+@app.route('/sales', methods=['GET', 'POST'])
 def sales_page():
-    return render_template('sales.html', sales=sales, active='sales')
+    global current_receipt_number
+    if request.method == 'POST':
+        if request.is_json:
+            sale_data = request.get_json()
+            
+            # Generate a unique reference if one isn't provided
+            if not sale_data.get('reference_no'):
+                sale_data['reference_no'] = generate_reference_number()
+            
+            # Format the sale data for storage
+            formatted_sale = {
+                'receipt_number': sale_data.get('receipt_number'),
+                'customer': sale_data.get('customer'),
+                'email': sale_data.get('email'),
+                'receipt_date': sale_data.get('receipt_date'),
+                'payment_method': sale_data.get('payment_method'),
+                'reference_no': sale_data.get('reference_no'),
+                'deposit_to': sale_data.get('deposit_to'),
+                'subtotal': float(sale_data.get('subtotal', 0)),
+                'discount': float(sale_data.get('discount', 0)),
+                'total': float(sale_data.get('total', 0)),
+                'delivered': float(sale_data.get('delivered', 0)),
+                'deposited': float(sale_data.get('deposited', 0)),
+                'items': sale_data.get('items', []),
+                'created_at': datetime.now().isoformat(),
+                'status': 'paid' if float(sale_data.get('delivered', 0)) >= float(sale_data.get('total', 0)) else 'pending'
+            }
+            
+            # Add to sales list (in production, this would go to a database)
+            sales.append(formatted_sale)
+            
+            return jsonify({
+                'status': 'success',
+                'message': 'Sale recorded successfully',
+                'reference': formatted_sale['reference_no']
+            })
+            
+    # GET request - render the sales form with new receipt number
+    current_receipt_number += 1
+    return render_template('sales.html', active='sales', receipt_number=current_receipt_number)
+
+@app.route('/sales_storage', methods=['GET', 'POST'])
+def sales_storage():
+    return render_template('sales_storage.html', active='sales', sales=sales)
 
 @app.route('/product/<int:id>')
 def product_detail(id):
@@ -123,10 +187,6 @@ def add_inventory():
 @app.route('/add_customer', methods=['GET', 'POST'])
 def add_customer():
     return render_template('add_customer.html', active='customers')
-
-@app.route('/sales_storage', methods=['GET', 'POST'])
-def sales_storage():
-    return render_template('sales_storage.html', active='sales')
 
 if __name__ == '__main__':
     app.run(debug=True)

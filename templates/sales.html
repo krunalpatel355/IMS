@@ -4,40 +4,140 @@
 <div class="sales-container" style="padding: 2rem;max-width: 1200px;margin: 0 auto;">
     <div class="header-section">
         <h1>Sales Receipt</h1>
-        <a href="{{ url_for('sales_storage') }}" class="view-btn"> All Sale</a>
+        <a href="{{ url_for('sales_storage') }}" class="btn btn-primary rm-td">All Sales</a>
     </div>
-    <form class="sales-form" method="POST" action="{{ url_for('sales_page') }}">
-        <div class="form-group">
-            <label>Company Name:</label>
-            <input type="text" name="company" required>
-        </div>
-        
-        <div class="form-group">
-            <label>Email:</label>
-            <input type="email" name="email" required>
-        </div>
-        
-        <div class="form-group">
-            <label>Product Name:</label>
-            <input type="text" name="product" required>
-        </div>
-        
-        <div class="form-group">
-            <label>Product Price:</label>
-            <input type="number" name="price" step="0.01" required>
-        </div>
-        
-        <button type="submit" class="add-button awesome-btn">Generate Receipt</button>
-    </form>
     
-    <div class="sales-list">
-        {% for sale in sales %}
-        <div class="sale-item">
-            <p>Company: {{ sale.company }}</p>
-            <p>Product: {{ sale.product }}</p>
-            <p>Price: ${{ "%.2f"|format(sale.price) }}</p>
+    <div class="checkout-container">
+        <div class="receipt-header">
+            <h1>Sales Receipt #<span id="receipt-number">{{ receipt_number }}</span></h1>
         </div>
-        {% endfor %}
+
+        <form id="sales-form" class="receipt-form" novalidate>
+            <div class="form-section">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="customer">Customer</label>
+                        <select id="customer" class="form-control-sm" required>
+                            <option value="daily-sales">Daily Sales</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" class="form-control-sm" placeholder="Email">
+                    </div>
+                    <div class="form-group">
+                        <label for="receipt-date">Sales Receipt Date</label>
+                        <input type="date" id="receipt-date" class="form-control-sm" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="payment-method">Payment Method</label>
+                        <select id="payment-method" class="form-control-sm" required>
+                            <option value="">Choose payment method</option>
+                            <option value="cash">Cash</option>
+                            <option value="check">Check</option>
+                            <option value="credit-card">Credit Card</option>
+                            <option value="bank-transfer">Bank Transfer</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="reference-no">Reference No.</label>
+                        <input type="text" id="reference-no" class="form-control-sm">
+                    </div>
+                    <div class="form-group">
+                        <label for="deposit-to">Deposit to</label>
+                        <select id="deposit-to" class="form-control-sm" required>
+                            <option value="clearing">Clearing Account</option>
+                            <option value="savings">Savings Account</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <table class="sales-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Service Date</th>
+                            <th>Product/Service</th>
+                            <th>Description</th>
+                            <th>QTY</th>
+                            <th>Rate</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sales-entries">
+                        <tr>
+                            <td>1</td>
+                            <td><input type="date" class="form-control-sm" required></td>
+                            <td><input type="text" class="form-control-sm" required></td>
+                            <td><input type="text" class="form-control-sm"></td>
+                            <td><input type="number" class="form-control-sm" min="1" value="1" required></td>
+                            <td><input type="number" class="form-control-sm" step="0.01" value="0.00" required></td>
+                            <td class="amount">0.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="button" id="add-row" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-plus"></i> Add Row
+                </button>
+            </div>
+
+            <div class="form-section totals-section">
+                <div class="totals-grid">
+                    <div class="total-row">
+                        <label>Subtotal:</label>
+                        <span id="subtotal" class="amount">0.00</span>
+                    </div>
+                    <div class="total-row">
+                        <label>Discount:</label>
+                        <div class="discount-input">
+                            <input type="number" id="discount" class="form-control-sm" min="0" step="0.01" value="0.00">
+                        </div>
+                    </div>
+                    <div class="total-row">
+                        <label>Total Amount:</label>
+                        <span id="total" class="amount total-amount">0.00</span>
+                    </div>
+                    <div class="total-row">
+                        <label>Delivered Amount:</label>
+                        <div class="delivered-input">
+                            <input type="number" id="delivered" class="form-control-sm" min="0" step="0.01" value="0.00">
+                        </div>
+                    </div>
+                    <div class="total-row">
+                        <label>Deposited Amount:</label>
+                        <div class="deposited-input">
+                            <input type="number" id="deposited" class="form-control-sm" min="0" step="0.01" value="0.00">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="submit-button">
+                    <i class="fas fa-check"></i> Create Receipt
+                </button>
+                <div id="loading-spinner" class="spinner" style="display: none;">
+                    <i class="fas fa-spinner fa-spin"></i> Processing...
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    <div id="success-message" class="alert alert-success" style="display: none;">
+        <i class="fas fa-check-circle"></i>
+        <span class="message-text"></span>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/checkout.js') }}"></script>
 {% endblock %}
