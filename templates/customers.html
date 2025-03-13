@@ -2,52 +2,102 @@
 
 {% block content %}
 <div class="customers-container">
-    <div>
-        <center><h1>Customers</h1>
-        <a href="{{ url_for('add_customer') }}" class="add-button awesome-btn">Add New customer</a>
-    </div> 
+    <div class="header-section">
+        <h1>Customers</h1>
+        <div class="actions-bar">
+            <div class="search-section">
+                <input type="text" id="customerSearch" placeholder="Search customers...">
+            </div>
+            <a href="{{ url_for('add_customer') }}" class="add-button awesome-btn">
+                <i class="fas fa-user-plus"></i> Add New Customer
+            </a>
+        </div>
+    </div>
+    
     <div class="customers-grid">
-        {% for customer in customers %}
+        <!-- Dummy Customer 1 -->
         <div class="customer-card">
-            <h2>{{ customer.name }}</h2>
-            <p class="email">Email: {{ customer.email }}</p>
-            <p class="number">Phone: {{ customer.number }}</p>
-            <div class="purchases">
-                <h3>Purchases:</h3>
+            <div class="customer-header">
+                <i class="fas fa-user-circle customer-avatar"></i>
+                <div class="customer-info">
+                    <h2>John Doe</h2>
+                    <span class="company-name">Acme Corp</span>
+                </div>
+            </div>
+            
+            <div class="customer-details">
+                <p><i class="fas fa-envelope"></i> john.doe@acme.com</p>
+                <p><i class="fas fa-phone"></i> (555) 123-4567</p>
+                <p><i class="fas fa-tag"></i> Corporate</p>
+            </div>
+            
+            <div class="recent-activity">
+                <h3><i class="fas fa-history"></i> Recent Purchases</h3>
                 <ul>
-                    {% for purchase in customer.purchases %}
-                    <li>{{ purchase }}</li>
-                    {% endfor %}
+                    <li>Laptop Pro X1 - $1,299</li>
+                    <li>Wireless Mouse - $49</li>
+                    <li>USB-C Hub - $79</li>
                 </ul>
+                <div class="more-indicator">+ 3 more</div>
+            </div>
+            
+            <div class="card-actions">
+                <a href="#" class="edit-btn awesome-btn">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+                <a href="#" class="view-btn">
+                    <i class="fas fa-history"></i> View History
+                </a>
             </div>
         </div>
+
+        <!-- Dummy Customer 2 -->
         <div class="customer-card">
-            <h2>{{ customer.name }}</h2>
-            <p class="email">Email: {{ customer.email }}</p>
-            <p class="number">Phone: {{ customer.number }}</p>
-            <div class="purchases">
-                <h3>Purchases:</h3>
+            <div class="customer-header">
+                <i class="fas fa-user-circle customer-avatar"></i>
+                <div class="customer-info">
+                    <h2>Jane Smith</h2>
+                    <span class="company-name">Tech Solutions Inc</span>
+                </div>
+            </div>
+            
+            <div class="customer-details">
+                <p><i class="fas fa-envelope"></i> jane.smith@techsolutions.com</p>
+                <p><i class="fas fa-phone"></i> (555) 987-6543</p>
+                <p><i class="fas fa-tag"></i> Premium</p>
+            </div>
+            
+            <div class="recent-activity">
+                <h3><i class="fas fa-history"></i> Recent Purchases</h3>
                 <ul>
-                    {% for purchase in customer.purchases %}
-                    <li>{{ purchase }}</li>
-                    {% endfor %}
+                    <li>Server Rack - $2,499</li>
+                    <li>Network Switch - $799</li>
+                    <li>UPS System - $999</li>
                 </ul>
+                <div class="more-indicator">+ 5 more</div>
+            </div>
+            
+            <div class="card-actions">
+                <a href="#" class="edit-btn awesome-btn">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+                <a href="#" class="view-btn">
+                    <i class="fas fa-history"></i> View History
+                </a>
             </div>
         </div>
-        <div class="customer-card">
-            <h2>{{ customer.name }}</h2>
-            <p class="email">Email: {{ customer.email }}</p>
-            <p class="number">Phone: {{ customer.number }}</p>
-            <div class="purchases">
-                <h3>Purchases:</h3>
-                <ul>
-                    {% for purchase in customer.purchases %}
-                    <li>{{ purchase }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-        {% endfor %}
     </div>
 </div>
+
+<script>
+document.getElementById('customerSearch').addEventListener('keyup', function() {
+    let searchText = this.value.toLowerCase();
+    let cards = document.querySelectorAll('.customer-card');
+    
+    cards.forEach(card => {
+        let text = card.textContent.toLowerCase();
+        card.style.display = text.includes(searchText) ? '' : 'none';
+    });
+});
+</script>
 {% endblock %}

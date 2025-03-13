@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="purchase-history-container">
+    <div class="customer-overview">
+        <div class="customer-info">
+            <h1>{{ customer.name }}</h1>
+            {% if customer.company %}
+            <p class="company-name">{{ customer.company }}</p>
+            {% endif %}
+            <div class="contact-details">
+                <p><i class="fas fa-envelope"></i> {{ customer.email }}</p>
+                <p><i class="fas fa-phone"></i> {{ customer.number }}</p>
+                {% if customer.type %}
+                <p><i class="fas fa-tag"></i> {{ customer.type }}</p>
+                {% endif %}
+            </div>
+        </div>
+        <a href="{{ url_for('customers_page') }}" class="view-btn">
+            <i class="fas fa-arrow-left"></i> Back to Customers
+        </a>
+    </div>
+
+    <div class="customer-stats">
+        <div class="stat-card">
+            <div class="value">{{ total_purchases }}</div>
+            <div class="label">Total Purchases</div>
+        </div>
+        <div class="stat-card">
+            <div class="value">${{ "%.2f"|format(total_spent) }}</div>
+            <div class="label">Total Spent</div>
+        </div>
+        <div class="stat-card">
+            <div class="value">{{ last_purchase_date }}</div>
+            <div class="label">Last Purchase</div>
+        </div>
+    </div>
+
+    <div class="purchase-timeline">
+        <h2><i class="fas fa-history"></i> Purchase History</h2>
+        {% for purchase in purchases %}
+        <div class="timeline-item">
+            <div class="timeline-date">
+                {{ purchase.date.strftime('%b %d, %Y') }}
+            </div>
+            <div class="timeline-content">
+                <h3>Order #{{ purchase.order_id }}</h3>
+                <div class="purchase-details">
+                    <table class="sales-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in purchase.items %}
+                            <tr>
+                                <td>{{ item.name }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>${{ "%.2f"|format(item.price) }}</td>
+                                <td class="total-column">${{ "%.2f"|format(item.price * item.quantity) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" style="text-align: right;"><strong>Order Total:</strong></td>
+                                <td class="total-column">${{ "%.2f"|format(purchase.total) }}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}

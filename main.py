@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 from bson import ObjectId
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -25,9 +26,25 @@ customers = [
     {
         'id': 1,
         'name': 'John Smith',
+        'company': 'Tech Corp',
         'email': 'john@example.com',
         'number': '123-456-7890',
-        'purchases': ['Widget A']
+        'type': 'Wholesale',
+        'purchases': ['Widget A', 'Widget B', 'Widget C']
+    }
+]
+
+# Sample purchase history data
+purchase_history = [
+    {
+        'customer_id': 1,
+        'order_id': 'ORD001',
+        'date': datetime(2023, 11, 15),
+        'items': [
+            {'name': 'Widget A', 'quantity': 2, 'price': 29.99},
+            {'name': 'Widget B', 'quantity': 1, 'price': 49.99}
+        ],
+        'total': 109.97
     }
 ]
 
@@ -45,6 +62,28 @@ def products():
 @app.route('/customers')
 def customers_page():
     return render_template('customers.html', customers=customers, active='customers')
+
+@app.route('/customer/<int:customer_id>/history')
+def customer_history(customer_id):
+    customer = next((c for c in customers if c['id'] == customer_id), None)
+    if not customer:
+        return redirect(url_for('customers_page'))
+    
+    # Get customer's purchase history
+    customer_purchases = [p for p in purchase_history if p['customer_id'] == customer_id]
+    
+    # Calculate statistics
+    total_purchases = len(customer_purchases)
+    total_spent = sum(p['total'] for p in customer_purchases)
+    last_purchase_date = max(p['date'] for p in customer_purchases).strftime('%b %d, %Y') if customer_purchases else 'No purchases'
+    
+    return render_template('customer_history.html', 
+                         customer=customer,
+                         purchases=customer_purchases,
+                         total_purchases=total_purchases,
+                         total_spent=total_spent,
+                         last_purchase_date=last_purchase_date,
+                         active='customers')
 
 @app.route('/sales')
 def sales_page():
@@ -81,7 +120,6 @@ def delete_inventory(item_id):
 def add_inventory():
     return render_template('add_inventory.html', active='inventory')
 
-
 @app.route('/add_customer', methods=['GET', 'POST'])
 def add_customer():
     return render_template('add_customer.html', active='customers')
@@ -89,7 +127,6 @@ def add_customer():
 @app.route('/sales_storage', methods=['GET', 'POST'])
 def sales_storage():
     return render_template('sales_storage.html', active='sales')
-
 
 if __name__ == '__main__':
     app.run(debug=True)
