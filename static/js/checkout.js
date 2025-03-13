@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <td>${rowCount + 1}</td>
             <td><input type="date" class="form-control-sm" required></td>
             <td><input type="text" class="form-control-sm" required></td>
-            <td><input type="text" class="form-control-sm"></td>
+            <td><input type="text" class="form-control-sm" placeholder="Optional"></td>
             <td><input type="number" class="form-control-sm" min="1" value="1" required></td>
             <td><input type="number" class="form-control-sm" step="0.01" value="0.00" required></td>
             <td class="amount">0.00</td>
@@ -126,7 +126,18 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         
         // Validate form
-        if (!this.checkValidity()) {
+        const requiredFields = this.querySelectorAll('[required]');
+        let isValid = true;
+        requiredFields.forEach(field => {
+            if (!field.value) {
+                isValid = false;
+                field.classList.add('is-invalid');
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+
+        if (!isValid) {
             alert('Please fill in all required fields.');
             return;
         }
@@ -163,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
             formData.items.push({
                 service_date: inputs[0].value,
                 product: inputs[1].value,
-                description: inputs[2].value,
+                description: inputs[2].value || '', // Handle empty description
                 quantity: inputs[3].value,
                 rate: inputs[4].value,
                 amount: row.querySelector('.amount').textContent
@@ -174,13 +185,16 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch('/sales', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCookie('csrf_token')
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(formData)
         })
         .then(response => {
-            if (!response.ok) throw new Error('Network response was not ok');
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(text || 'Network response was not ok');
+                });
+            }
             return response.json();
         })
         .then(data => {
@@ -200,7 +214,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => {
             console.error('Error:', error);
-            alert(error.message || 'There was an error submitting the form. Please try again.');
+            alert('Error submitting form: ' + (error.message || 'Please try again'));
             resetSubmitState();
         });
     });
@@ -213,13 +227,6 @@ document.addEventListener('DOMContentLoaded', function() {
         submitButton.style.display = 'inline-flex';
         loadingSpinner.style.display = 'none';
         salesForm.classList.remove('form-submitting');
-    }
-
-    // Get CSRF token
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
     }
 
     // Initialize the form

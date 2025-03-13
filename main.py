@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, make_response, flash, send_from_directory
-from flask_wtf.csrf import CSRFProtect
 from flask_wtf import FlaskForm
 from bson import ObjectId
 from datetime import datetime
@@ -12,7 +11,6 @@ import os.path
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'
-csrf = CSRFProtect(app)
 
 # MongoDB Configuration
 client = MongoClient('mongodb://localhost:27017/')
@@ -23,6 +21,17 @@ inventory_collection = db.inventory
 customers_collection = db.customers
 sales_collection = db.sales
 purchase_history_collection = db.purchase_history
+
+# Receipt number management
+def get_next_receipt_number():
+    """Get the next available receipt number from the database"""
+    last_sale = sales_collection.find_one(sort=[("receipt_number", -1)])
+    if last_sale and 'receipt_number' in last_sale:
+        try:
+            return int(last_sale['receipt_number']) + 1
+        except (ValueError, TypeError):
+            return 1000  # Start from 1000 if there's an issue with the last number
+    return 1000  # Start from 1000 if no previous sales
 
 # File upload configuration
 UPLOAD_FOLDER = os.path.join('static', 'uploads')
@@ -82,14 +91,11 @@ def customer_history(customer_id):
                          active='customers')
 
 @app.route('/get_next_receipt_number')
-def get_next_receipt_number():
-    global current_receipt_number
-    current_receipt_number += 1
-    return jsonify({'receipt_number': current_receipt_number})
+def get_next_receipt_number_route():
+    return jsonify({'receipt_number': get_next_receipt_number()})
 
 @app.route('/sales', methods=['GET', 'POST'])
 def sales_page():
-    global current_receipt_number
     if request.method == 'POST':
         if request.is_json:
             sale_data = request.get_json()
@@ -125,13 +131,20 @@ def sales_page():
                 'message': 'Sale recorded successfully',
                 'reference': formatted_sale['reference_no']
             })
-            
-    current_receipt_number += 1
-    return render_template('sales.html', active='sales', receipt_number=current_receipt_number)
+    
+    # For GET requests, generate a new receipt number        
+    receipt_number = get_next_receipt_number()
+    return render_template('sales.html', active='sales', receipt_number=receipt_number)
 
 @app.route('/sales_storage', methods=['GET', 'POST'])
 def sales_storage():
     sales = list(sales_collection.find())
+    for sale in sales:
+        print('Sale:', sale)
+        if isinstance(sale['items'], list):
+            print('Items is a list')
+        else:
+            print('Items is not a list')
     return render_template('sales_storage.html', active='sales', sales=sales)
 
 @app.route('/product/<product_id>')
@@ -232,12 +245,32 @@ def add_inventory():
 
 @app.route('/add_customer', methods=['GET', 'POST'])
 def add_customer():
-    if request.method == 'POST':
+    form = FlaskForm()
+    if request.method == 'POST' and form.validate_on_submit():
         customer_data = request.form.to_dict()
-        customer_data['purchases'] = []  # Initialize empty purchases list
-        customers_collection.insert_one(customer_data)
-        return redirect(url_for('customers_page'))
-    return render_template('add_customer.html', active='customers')
+        
+        # Check required fields
+        required_fields = ['company', 'email', 'phone']
+        if not all(customer_data.get(field) for field in required_fields):
+            flash('Company name, email, and phone number are required.')
+            return render_template('add_customer.html', active='customers', form=form)
+            
+        # Remove empty fields
+        customer_data = {k: v for k, v in customer_data.items() if v}
+        
+        # Initialize empty purchases list
+        customer_data['purchases'] = []
+        customer_data['created_at'] = datetime.now()
+        
+        # Insert into MongoDB
+        result = customers_collection.insert_one(customer_data)
+        if result.inserted_id:
+            return redirect(url_for('customers_page'))
+        else:
+            flash('Error adding customer.')
+            return render_template('add_customer.html', active='customers', form=form)
+            
+    return render_template('add_customer.html', active='customers', form=form)
 
 if __name__ == '__main__':
     # Initialize collections with sample data if empty

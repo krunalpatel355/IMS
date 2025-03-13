@@ -3,41 +3,71 @@
 {% block content %}
 <div class="container">
     <div class="header-section">
-        <h1>Customers</h1>
+        <h1>Add New Customer</h1>
         <div class="actions-bar">
-            <div class="search-section">
-                <input type="text" id="customerSearch" placeholder="Search customers...">
-            </div>
             <a href="{{ url_for('customers_page') }}" class="add-button awesome-btn">
-                 ALL Customer
+                <i class="fas fa-arrow-left"></i> Back to Customers
             </a>
         </div>
     </div>
-    <form class="invento    ry-form" method="POST">
+    
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-danger">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    <form class="inventory-form" method="POST">
+        {{ form.csrf_token }}
         <div class="form-section">
             <h2 class="section-title">
                 <i class="fas fa-user-circle"></i>
-                Basic Information
+                Required Information
             </h2>
             <div class="form-grid">
                 <div class="form-group">
-                    <label for="name">Full Name</label>
-                    <input type="text" id="name" name="name" required placeholder="Enter customer name">
+                    <label for="company">Company Name*</label>
+                    <input type="text" id="company" name="company" required placeholder="Enter company name">
                 </div>
 
                 <div class="form-group">
-                    <label for="company">Company Name</label>
-                    <input type="text" id="company" name="company" placeholder="Enter company name">
-                </div>
-
-                <div class="form-group">
-                    <label for="email">Email Address</label>
+                    <label for="email">Email Address*</label>
                     <input type="email" id="email" name="email" required placeholder="Enter email address">
                 </div>
 
                 <div class="form-group">
-                    <label for="phone">Phone Number</label>
+                    <label for="phone">Phone Number*</label>
                     <input type="tel" id="phone" name="phone" required placeholder="Enter phone number">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2 class="section-title">
+                <i class="fas fa-user"></i>
+                Additional Information
+            </h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="name">Contact Person's Name</label>
+                    <input type="text" id="name" name="name" placeholder="Enter contact person's name">
+                </div>
+
+                <div class="form-group">
+                    <label for="type">Customer Type</label>
+                    <select id="type" name="type">
+                        <option value="">Select type (optional)</option>
+                        <option value="retail">Retail</option>
+                        <option value="wholesale">Wholesale</option>
+                        <option value="distributor">Distributor</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="tax_id">Tax ID/VAT Number</label>
+                    <input type="text" id="tax_id" name="tax_id" placeholder="Enter tax ID or VAT number">
                 </div>
             </div>
         </div>
@@ -50,27 +80,27 @@
             <div class="form-grid">
                 <div class="form-group full-width">
                     <label for="street">Street Address</label>
-                    <input type="text" id="street" name="street" required placeholder="Enter street address">
+                    <input type="text" id="street" name="street" placeholder="Enter street address">
                 </div>
 
                 <div class="form-group">
                     <label for="city">City</label>
-                    <input type="text" id="city" name="city" required placeholder="Enter city">
+                    <input type="text" id="city" name="city" placeholder="Enter city">
                 </div>
 
                 <div class="form-group">
                     <label for="state">State</label>
-                    <input type="text" id="state" name="state" required placeholder="Enter state">
+                    <input type="text" id="state" name="state" placeholder="Enter state">
                 </div>
 
                 <div class="form-group">
                     <label for="postal">Postal Code</label>
-                    <input type="text" id="postal" name="postal" required placeholder="Enter postal code">
+                    <input type="text" id="postal" name="postal" placeholder="Enter postal code">
                 </div>
 
                 <div class="form-group">
                     <label for="country">Country</label>
-                    <input type="text" id="country" name="country" required placeholder="Enter country">
+                    <input type="text" id="country" name="country" placeholder="Enter country">
                 </div>
             </div>
         </div>
@@ -78,26 +108,11 @@
         <div class="form-section">
             <h2 class="section-title">
                 <i class="fas fa-clipboard-list"></i>
-                Additional Information
+                Notes
             </h2>
             <div class="form-grid">
-                <div class="form-group">
-                    <label for="type">Customer Type</label>
-                    <select id="type" name="type" required>
-                        <option value="">Select type</option>
-                        <option value="retail">Retail</option>
-                        <option value="wholesale">Wholesale</option>
-                        <option value="distributor">Distributor</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="tax_id">Tax ID/VAT Number</label>
-                    <input type="text" id="tax_id" name="tax_id" placeholder="Enter tax ID or VAT number">
-                </div>
-
                 <div class="form-group full-width">
-                    <label for="notes">Notes</label>
+                    <label for="notes">Additional Notes</label>
                     <textarea id="notes" name="notes" rows="3" placeholder="Enter any additional notes about the customer"></textarea>
                 </div>
             </div>

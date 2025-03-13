@@ -15,77 +15,49 @@
     </div>
     
     <div class="customers-grid">
-        <!-- Dummy Customer 1 -->
+        {% for customer in customers %}
         <div class="customer-card">
             <div class="customer-header">
                 <i class="fas fa-user-circle customer-avatar"></i>
                 <div class="customer-info">
-                    <h2>John Doe</h2>
-                    <span class="company-name">Acme Corp</span>
+                    <h2>{{ customer.name if customer.name else 'No Contact Name' }}</h2>
+                    <span class="company-name">{{ customer.company }}</span>
                 </div>
             </div>
             
             <div class="customer-details">
-                <p><i class="fas fa-envelope"></i> john.doe@acme.com</p>
-                <p><i class="fas fa-phone"></i> (555) 123-4567</p>
-                <p><i class="fas fa-tag"></i> Corporate</p>
+                <p><i class="fas fa-envelope"></i> {{ customer.email }}</p>
+                <p><i class="fas fa-phone"></i> {{ customer.phone }}</p>
+                {% if customer.type %}
+                <p><i class="fas fa-tag"></i> {{ customer.type }}</p>
+                {% endif %}
             </div>
             
+            {% if customer.purchases %}
             <div class="recent-activity">
                 <h3><i class="fas fa-history"></i> Recent Purchases</h3>
                 <ul>
-                    <li>Laptop Pro X1 - $1,299</li>
-                    <li>Wireless Mouse - $49</li>
-                    <li>USB-C Hub - $79</li>
+                    {% for purchase in customer.purchases[:3] %}
+                    <li>{{ purchase.item_name }} - ${{ "%.2f"|format(purchase.amount) }}</li>
+                    {% endfor %}
                 </ul>
-                <div class="more-indicator">+ 3 more</div>
+                {% if customer.purchases|length > 3 %}
+                <div class="more-indicator">+ {{ customer.purchases|length - 3 }} more</div>
+                {% endif %}
             </div>
+            {% endif %}
             
             <div class="card-actions">
-                <a href="#" class="edit-btn awesome-btn">
-                    <i class="fas fa-edit"></i> Edit
-                </a>
-                <a href="#" class="view-btn">
+                <a href="{{ url_for('customer_history', customer_id=customer._id) }}" class="view-btn">
                     <i class="fas fa-history"></i> View History
                 </a>
             </div>
         </div>
-
-        <!-- Dummy Customer 2 -->
-        <div class="customer-card">
-            <div class="customer-header">
-                <i class="fas fa-user-circle customer-avatar"></i>
-                <div class="customer-info">
-                    <h2>Jane Smith</h2>
-                    <span class="company-name">Tech Solutions Inc</span>
-                </div>
-            </div>
-            
-            <div class="customer-details">
-                <p><i class="fas fa-envelope"></i> jane.smith@techsolutions.com</p>
-                <p><i class="fas fa-phone"></i> (555) 987-6543</p>
-                <p><i class="fas fa-tag"></i> Premium</p>
-            </div>
-            
-            <div class="recent-activity">
-                <h3><i class="fas fa-history"></i> Recent Purchases</h3>
-                <ul>
-                    <li>Server Rack - $2,499</li>
-                    <li>Network Switch - $799</li>
-                    <li>UPS System - $999</li>
-                </ul>
-                <div class="more-indicator">+ 5 more</div>
-            </div>
-            
-            <div class="card-actions">
-                <a href="#" class="edit-btn awesome-btn">
-                    <i class="fas fa-edit"></i> Edit
-                </a>
-                <a href="#" class="view-btn">
-                    <i class="fas fa-history"></i> View History
-                </a>
-            </div>
+        {% else %}
+        <div class="no-customers">
+            <p>No customers found. Add your first customer!</p>
         </div>
+        {% endfor %}
     </div>
 </div>
 
