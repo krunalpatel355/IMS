@@ -1,62 +1,184 @@
-# Inventory Management System (IMS)
+# Project Bolt 🚀
 
-A Flask-based Inventory Management System for tracking products, customers, and sales with receipt generation capabilities.
+[![Made with Flask](https://img.shields.io/badge/Made%20with-Flask-blue.svg)](https://flask.palletsprojects.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-4.4+-green.svg)](https://www.mongodb.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Features
+<div align="center">
+  <h3>A Modern Inventory Management System</h3>
+  <p>Streamline your business operations with our powerful and intuitive IMS solution.</p>
+</div>
 
-- Product Inventory Management
-  - Add, edit, and delete inventory items
-  - Track stock levels, prices, and product details
-  - Product categorization and search
-  - Detailed product information including brand, owner, part numbers
-- Customer Management
-  - Customer profiles with company information
-  - Customer purchase history tracking
-  - Customer type categorization (Wholesale, etc.)
-- Sales Management
-  - Generate unique receipt numbers
-  - Multiple payment methods support
-  - Track deposits and delivery status
-  - Reference number generation
-  - Sales history storage
-- Additional Features
-  - Interactive product detail views
-  - Sales receipt generation
+<br>
+
+## ✨ Features
+
+<table>
+  <tr>
+    <td>📦 <b>Inventory Management</b></td>
+    <td>🛒 <b>Sales Processing</b></td>
+    <td>👥 <b>Customer Management</b></td>
+  </tr>
+  <tr>
+    <td>
+      • Real-time stock tracking<br>
+      • Low stock alerts<br>
+      • Product categorization
+    </td>
+    <td>
+      • Quick checkout process<br>
+      • Digital receipts<br>
+      • Payment tracking
+    </td>
+    <td>
+      • Customer profiles<br>
+      • Purchase history<br>
+      • Contact management
+    </td>
+  </tr>
+</table>
+
+## 🛠️ Built With
+
+- **Backend Framework**: Flask (Python)
+- **Database**: MongoDB
+- **Frontend**: HTML5, CSS3, JavaScript
+- **Additional Tools**:
+  - Flask-WTF for form handling
+  - BeautifulSoup for data parsing
+  - Requests for HTTP operations
+
+## 🛠️ Technical Stack
+
+- **Backend**: 
+  - Flask 2.0.1 with Flask-WTF for form handling
+  - MongoDB 4.4+ for database
+  - Python 3.7+ environment
+- **Frontend**: 
+  - HTML5, CSS3, JavaScript (Vanilla)
+  - Font Awesome for icons
+  - Responsive design with CSS Grid/Flexbox
+- **Security**:
   - CSRF protection
-  - Customer purchase statistics
+  - File upload validation
+  - Input sanitization
+  - Error handling
+- **Performance**:
+  - Automated link performance monitoring
+  - Response time tracking
+  - Health checks
+  - Error logging system
 
-## Technology Stack
+## 🚀 Quick Start
 
-- Python 3.x
-- Flask 2.3.3
-- Flask-WTF 1.1.1
-- Python-dotenv 1.0.0
-- MongoDB support (via pymongo 4.5.0)
-- Gunicorn 21.2.0 for production deployment
-- HTML/CSS
-- JavaScript
+### Prerequisites
 
-## Prerequisites
-
-- Python 3.8 or higher
-- pip (Python package installer)
+- Python 3.7+
+- MongoDB 4.4+
 - Git
 
-## Installation
+### Installation
 
-1. Clone the repository:
+1. Clone the repository
 ```bash
 git clone <repository-url>
-cd project
 ```
 
-2. Create and activate virtual environment:
+2. Navigate to project directory
 ```bash
-python -m venv venv
-# On Windows
-venv\Scripts\activate
-# On Unix or MacOS
-source venv/bin/activate
+cd project-bolt-sb1-jw5tfp2t/project
+```
+
+3. Install dependencies
+```bash
+pip install -r requirements.txt
+```
+
+4. Start the application
+```bash
+python main.py
+```
+
+5. Access the application at `http://127.0.0.1:5000`
+
+## 📁 Project Structure
+
+```plaintext
+project/
+├── main.py              # Core application logic
+├── templates/           # HTML templates
+├── static/             # Static assets (CSS, JS, images)
+├── logs/              # Application logs
+└── requirements.txt    # Python dependencies
+```
+
+## 💡 Key Features In-Depth
+
+### Inventory Management
+- Add, edit, and delete inventory items
+- Track stock levels in real-time
+- Set minimum stock alerts
+- Upload product images
+- Track product performance
+
+### Sales Management
+- Process sales transactions
+- Generate digital receipts
+- Track payment status
+- Monitor sales history
+- Export sales reports
+
+### Customer Management
+- Maintain customer profiles
+- Track purchase history
+- Manage customer communications
+- Set customer-specific pricing
+
+## 📦 Extended Features
+
+### Advanced Inventory Management
+- Stock level alerts
+- Product categorization
+- Image upload with validation
+- Price trend tracking
+- Quick sale functionality
+- Detailed product metrics
+
+### Comprehensive Customer Management
+- Multiple customer types (Retail, Wholesale, Distributor, Corporate)
+- Credit limit management
+- Payment terms configuration
+- Purchase history tracking
+- Customer-specific pricing
+
+### Sales & Receipt System
+- Digital receipt generation
+- Multiple payment methods
+- Sales history tracking
+- Reference number generation
+- Batch processing capability
+
+## 🔍 Performance Monitoring
+
+Monitor your system's performance with built-in tools:
+- Link performance tracking
+- Response time monitoring
+- Error logging and alerts
+- System health checks
+
+## 🔧 Development Setup
+
+1. Set up MongoDB:
+```bash
+# Start MongoDB service
+mongod --dbpath /path/to/data/db
+```
+
+2. Set environment variables:
+```bash
+# Create .env file
+SECRET_KEY=your-secret-key
+MONGODB_URI=mongodb://localhost:27017/IMS
 ```
 
 3. Install dependencies:
@@ -64,86 +186,67 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-4. Create a .env file in the project root:
-```
-FLASK_APP=main.py
-FLASK_ENV=development
-SECRET_KEY=your-secret-key-here
-```
-
-5. Run the application:
+4. Run tests:
 ```bash
-# Development
+pytest
+```
+
+5. Start development server:
+```bash
 python main.py
-
-# Production
-gunicorn main:app
 ```
 
-The application will be available at `http://localhost:5000` (development) or `http://localhost:8000` (production)
+## 📚 API Documentation
 
-## Project Structure
+### Inventory Endpoints
+- `GET /inventory` - List all inventory items
+- `POST /add_inventory` - Add new inventory item
+- `GET/POST /edit_inventory/<item_id>` - Edit inventory item
+- `GET /product/<product_id>` - Get product details
 
-```
-project/
-├── main.py                 # Main application file with routes and logic
-├── static/                 # Static files (CSS, JS, images)
-│   ├── style.css          # Main stylesheet
-│   └── js/
-│       └── checkout.js    # JavaScript for checkout functionality
-├── templates/             # HTML templates
-│   ├── base.html         # Base template
-│   ├── inventory.html    # Inventory management
-│   ├── products.html     # Product listing
-│   ├── product_detail.html # Individual product view
-│   ├── add_inventory.html # Add new inventory
-│   ├── edit_inventory.html # Edit inventory items
-│   ├── customers.html    # Customer management
-│   ├── add_customer.html # Add new customer
-│   ├── customer_history.html # Customer purchase history
-│   ├── sales.html       # Sales management
-│   └── sales_storage.html # Sales history
-└── requirements.txt      # Project dependencies
+### Customer Endpoints
+- `GET /customers` - List all customers
+- `POST /add_customer` - Add new customer
+- `GET/POST /edit_customer/<customer_id>` - Edit customer details
+- `GET /customer/<customer_id>/history` - Get customer history
 
-## Configuration
+### Sales Endpoints
+- `GET /sales` - List all sales
+- `POST /quick_sale` - Process quick sale
+- `GET /sales/print/<reference_no>` - Generate sale receipt
 
-The application uses environment variables for configuration:
-- `FLASK_APP`: Specifies the main application file
-- `FLASK_ENV`: Set to 'development' or 'production'
-- `SECRET_KEY`: Used for session management and CSRF protection
-- `MONGO_URI`: (Optional) MongoDB connection string if using MongoDB
+## 🤝 Contributing
 
-## Development Notes
-
-The application currently uses in-memory data structures but is prepared for MongoDB integration:
-- Collections are defined for: Inventory, Customers, Sales, and History
-- MongoDB connection strings can be configured via environment variables
-- Commented code includes MongoDB integration patterns
-
-For production deployment:
-1. Set up a MongoDB database
-2. Configure proper environment variables
-3. Use a strong SECRET_KEY
-4. Deploy behind a reverse proxy (nginx recommended)
-5. Enable HTTPS
-6. Set up proper logging
-
-## Security Features
-
-- CSRF protection via Flask-WTF
-- Secure session management
-- Input validation and sanitization
-- File upload restrictions
-- Unique ID generation for receipts and references
-
-## Contributing
+We welcome contributions! Here's how you can help:
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
+2. Create a feature branch
+   ```bash
+   git checkout -b feature/AmazingFeature
+   ```
+3. Commit your changes
+   ```bash
+   git commit -m 'Add some AmazingFeature'
+   ```
+4. Push to the branch
+   ```bash
+   git push origin feature/AmazingFeature
+   ```
 5. Open a Pull Request
 
-## License
+## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 📫 Contact & Support
+
+- **Email**: [support@projectbolt.com](mailto:support@projectbolt.com)
+- **Issues**: Submit issues through our [GitHub Issues](https://github.com/yourusername/project-bolt/issues)
+- **Documentation**: [Project Wiki](https://github.com/yourusername/project-bolt/wiki)
+
+---
+
+<div align="center">
+  <p>Made with ❤️ by Team Bolt</p>
+  <p>© 2023 Project Bolt. All rights reserved.</p>
+</div>
