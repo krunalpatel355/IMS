@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt #{{ sale.receipt_number }}</title>
+    <style>
+        @media print {
+            body {
+                margin: 0;
+                padding: 20px;
+                font-family: Arial, sans-serif;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .receipt {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            color: #2c3e50;
+        }
+        
+        .details {
+            margin-bottom: 30px;
+        }
+        
+        .details p {
+            margin: 5px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        .totals {
+            text-align: right;
+            margin-top: 20px;
+        }
+        
+        .totals p {
+            margin: 5px 0;
+        }
+        
+        .total {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .actions {
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .print-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .print-btn:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt">
+        <div class="header">
+            <h1>Receipt</h1>
+            <p>Receipt #{{ sale.receipt_number }}</p>
+            <p>Date: {{ sale.formatted_date }}</p>
+            <p>Reference: {{ sale.reference_no }}</p>
+        </div>
+        
+        <div class="details">
+            <p><strong>Customer:</strong> {{ sale.customer }}</p>
+            <p><strong>Email:</strong> {{ sale.email }}</p>
+            <p><strong>Payment Method:</strong> {{ sale.payment_method }}</p>
+            <p><strong>Deposit To:</strong> {{ sale.deposit_to }}</p>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Service Date</th>
+                    <th>Product/Service</th>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Rate</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in sale.items %}
+                <tr>
+                    <td>{{ item.service_date }}</td>
+                    <td>{{ item.product }}</td>
+                    <td>{{ item.description }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>${{ "%.2f"|format(item.rate|float) }}</td>
+                    <td>${{ "%.2f"|format(item.amount|float) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div class="totals">
+            <p><strong>Subtotal:</strong> {{ subtotal }}</p>
+            <p><strong>Discount:</strong> {{ discount }}</p>
+            <p class="total"><strong>Total:</strong> {{ total }}</p>
+            <p><strong>Delivered:</strong> {{ delivered }}</p>
+            <p><strong>Deposited:</strong> {{ deposited }}</p>
+            <p><strong>Status:</strong> {{ sale.status|capitalize }}</p>
+        </div>
+        
+        <div class="actions no-print">
+            <button onclick="window.print()" class="print-btn">Print Receipt</button>
+        </div>
+    </div>
+</body>
+</html>

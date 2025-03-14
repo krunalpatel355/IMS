@@ -2,7 +2,7 @@
 {% block content %}
 <div class="container">
     <div class="header-section">
-        <h1>Add New Customer</h1>
+        <h1>Edit Customer - {{ customer.company }}</h1>
         <a href="{{ url_for('customers_page') }}" class="awesome-btn">
             <i class="fas fa-arrow-left"></i> Back to Customers
         </a>
@@ -13,22 +13,22 @@
         <div class="form-grid">
             <div class="form-group">
                 <label>Company Name *</label>
-                <input type="text" name="company" required>
+                <input type="text" name="company" value="{{ customer.company }}" required>
             </div>
             
             <div class="form-group">
                 <label>Contact Person Name *</label>
-                <input type="text" name="name" required>
+                <input type="text" name="name" value="{{ customer.name }}" required>
             </div>
             
             <div class="form-group">
                 <label>Email Address *</label>
-                <input type="email" name="email" required>
+                <input type="email" name="email" value="{{ customer.email }}" required>
             </div>
             
             <div class="form-group">
                 <label>Phone Number *</label>
-                <input type="tel" name="phone" required 
+                <input type="tel" name="phone" value="{{ customer.phone }}" required 
                        pattern="[0-9\+\-\(\) ]+"
                        title="Please enter a valid phone number">
             </div>
@@ -36,51 +36,66 @@
             <div class="form-group">
                 <label>Customer Type</label>
                 <select name="type" required>
-                    <option value="Retail">Retail</option>
-                    <option value="Wholesale">Wholesale</option>
-                    <option value="Distributor">Distributor</option>
-                    <option value="Corporate">Corporate</option>
+                    {% for type in ['Retail', 'Wholesale', 'Distributor', 'Corporate'] %}
+                        <option value="{{ type }}" {% if customer.type == type %}selected{% endif %}>
+                            {{ type }}
+                        </option>
+                    {% endfor %}
                 </select>
             </div>
             
             <div class="form-group">
                 <label>Address</label>
-                <textarea name="address" rows="3"></textarea>
+                <textarea name="address" rows="3">{{ customer.address }}</textarea>
             </div>
             
             <div class="form-group">
                 <label>Tax ID / Business Number</label>
-                <input type="text" name="tax_id">
+                <input type="text" name="tax_id" value="{{ customer.tax_id }}">
             </div>
             
             <div class="form-group">
                 <label>Payment Terms</label>
                 <select name="payment_terms">
-                    <option value="immediate">Immediate Payment</option>
-                    <option value="net15">Net 15</option>
-                    <option value="net30">Net 30</option>
-                    <option value="net60">Net 60</option>
+                    {% for term, label in [
+                        ('immediate', 'Immediate Payment'),
+                        ('net15', 'Net 15'),
+                        ('net30', 'Net 30'),
+                        ('net60', 'Net 60')
+                    ] %}
+                        <option value="{{ term }}" {% if customer.payment_terms == term %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
                 </select>
             </div>
             
             <div class="form-group">
                 <label>Credit Limit</label>
-                <input type="number" name="credit_limit" min="0" step="0.01" value="0.00">
+                <input type="number" name="credit_limit" min="0" step="0.01" 
+                       value="{{ "%.2f"|format(customer.credit_limit|default(0.00)) }}">
             </div>
         </div>
 
         <div class="form-section">
             <div class="form-group">
                 <label>Additional Notes</label>
-                <textarea name="notes" rows="4" placeholder="Enter any additional information about the customer"></textarea>
+                <textarea name="notes" rows="4" placeholder="Enter any additional information about the customer">{{ customer.notes }}</textarea>
             </div>
         </div>
 
         <div class="form-actions">
             <button type="submit" class="btn-submit">
-                <i class="fas fa-plus"></i>
-                Add Customer
+                <i class="fas fa-save"></i>
+                Save Changes
             </button>
+            <a href="#" 
+               class="btn-danger"
+               onclick="deleteCustomer('{{ customer._id }}', '{{ customer.company }}')"
+               title="Delete Customer">
+                <i class="fas fa-trash"></i>
+                Delete Customer
+            </a>
         </div>
     </form>
 </div>
@@ -103,6 +118,9 @@ textarea {
 
 .form-actions {
     margin-top: 30px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
 }
 
 label::after {
@@ -118,5 +136,15 @@ label[for="phone"]::after {
     display: inline;
 }
 </style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function deleteCustomer(id, company) {
+    if (confirm(`Are you sure you want to delete ${company}? This action cannot be undone.`)) {
+        window.location.href = `/delete_customer/${id}`;
+    }
+}
+</script>
 {% endblock %}
 {% endblock %}

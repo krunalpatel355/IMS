@@ -1,40 +1,87 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="inventory-container">
-    <h1>Inventory</h1>
-    
-    <div class="actions-bar">
-        <div class="search-section">
-            <input type="text" id="inventorySearch" placeholder="Search inventory...">
+<div class="container">
+    <div class="header-section">
+        <h1>Inventory Management</h1>
+        <div class="actions-bar">
+            <div class="search-section">
+                <input type="text" id="inventorySearch" placeholder="Search products...">
+            </div>
+            <a href="{{ url_for('add_inventory') }}" class="add-button awesome-btn">
+                <i class="fas fa-plus"></i> Add Product
+            </a>
         </div>
-        <a href="{{ url_for('add_inventory') }}" class="add-button awesome-btn">Add New Inventory</a>
     </div>
-    
+
     <div class="table-container">
         <table class="modern-table">
             <thead>
                 <tr>
                     <th>Image</th>
-                    <th>Name</th>
-                    <th>Brand</th>
-                    <th>Stock</th>
-                    <th>Price</th>
+                    <th>Product</th>
                     <th>Part Number</th>
+                    <th>Stock</th>
+                    <th>Min. Stock</th>
+                    <th>Price</th>
+                    <th>Cost</th>
+                    <th>Owner</th>
+                    <th>Status</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for item in inventory %}
                 <tr>
-                    <td><img src="{{ url_for('static', filename='uploads/' + (item.photo or 'product1.jpg')) }}" alt="{{ item.name }}"></td>
-                    <td><a href="{{ url_for('product_detail', product_id=item._id) }}" class="product-name">{{ item.name }}</a></td>
-                    <td>{{ item.brand }}</td>
-                    <td>{{ item.stock }}</td>
-                    <td>${{ "%.2f"|format(item.price if item.price is defined else 0.00) }}</td>
+                    <td>
+                        <img src="{{ url_for('static', filename='uploads/' + (item.photo or 'product1.jpg')) }}" 
+                             alt="{{ item.name }}"
+                             class="product-thumbnail">
+                    </td>
+                    <td>
+                        <div class="product-info">
+                            <span class="product-name">{{ item.name }}</span>
+                            <span class="product-brand">{{ item.brand }}</span>
+                        </div>
+                    </td>
                     <td>{{ item.part_number }}</td>
                     <td>
-                        <a href="{{ url_for('edit_inventory', item_id=item._id) }}" class="edit-btn awesome-btn">Edit</a>
-                        <a href="{{ url_for('delete_inventory', item_id=item._id) }}" class="delete-btn awesome-btn">Delete</a>
+                        <span class="stock-level {% if item.stock <= item.min_stock|default(0) %}low-stock{% endif %}">
+                            {{ item.stock }}
+                        </span>
+                    </td>
+                    <td>{{ item.min_stock|default(0) }}</td>
+                    <td>${{ "%.2f"|format(item.price) }}</td>
+                    <td>${{ "%.2f"|format(item.cost) }}</td>
+                    <td>{{ item.owner }}</td>
+                    <td>
+                        <span class="badge {% if item.stock > 0 %}badge-success{% else %}badge-danger{% endif %}">
+                            {% if item.stock > 0 %}In Stock{% else %}Out of Stock{% endif %}
+                        </span>
+                        {% if item.rising == 'Yes' %}
+                        <span class="badge badge-warning">
+                            <i class="fas fa-arrow-up"></i> Rising
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="{{ url_for('product_detail', product_id=item._id) }}" 
+                               class="action-btn view-btn"
+                               title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ url_for('edit_inventory', item_id=item._id) }}" 
+                               class="action-btn edit-btn"
+                               title="Edit Product">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="#" 
+                               class="action-btn delete-btn"
+                               onclick="deleteProduct('{{ item._id }}', '{{ item.name }}')"
+                               title="Delete Product">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
                     </td>
                 </tr>
                 {% endfor %}
@@ -42,6 +89,71 @@
         </table>
     </div>
 </div>
+
+{% block extra_css %}
+<style>
+.product-thumbnail {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.product-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.product-name {
+    font-weight: 500;
+    color: var(--primary-color);
+}
+
+.product-brand {
+    font-size: 0.85rem;
+    color: var(--text-color);
+}
+
+.stock-level {
+    font-weight: 500;
+}
+
+.stock-level.low-stock {
+    color: var(--danger-color);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.view-btn {
+    background-color: var(--secondary-color);
+}
+
+.edit-btn {
+    background-color: var(--warning-color);
+}
+
+.delete-btn {
+    background-color: var(--danger-color);
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin: 2px;
+}
+
+.badge-danger {
+    background-color: rgba(231, 76, 60, 0.2);
+    color: var(--danger-color);
+}
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
 <script>
 document.getElementById('inventorySearch').addEventListener('keyup', function() {
     let searchText = this.value.toLowerCase();
@@ -52,5 +164,12 @@ document.getElementById('inventorySearch').addEventListener('keyup', function() 
         row.style.display = text.includes(searchText) ? '' : 'none';
     });
 });
+
+function deleteProduct(id, name) {
+    if (confirm(`Are you sure you want to delete ${name}? This action cannot be undone.`)) {
+        window.location.href = `/delete_inventory/${id}`;
+    }
+}
 </script>
+{% endblock %}
 {% endblock %}

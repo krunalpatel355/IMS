@@ -1,85 +1,201 @@
 {% extends "base.html" %}
-
 {% block content %}
-<div class="purchase-history-container">
-    <div class="customer-overview">
-        <div class="customer-info">
-            <h1>{{ customer.name }}</h1>
-            {% if customer.company %}
-            <p class="company-name">{{ customer.company }}</p>
-            {% endif %}
-            <div class="contact-details">
-                <p><i class="fas fa-envelope"></i> {{ customer.email }}</p>
-                <p><i class="fas fa-phone"></i> {{ customer.number }}</p>
-                {% if customer.type %}
-                <p><i class="fas fa-tag"></i> {{ customer.type }}</p>
-                {% endif %}
-            </div>
-        </div>
-        <a href="{{ url_for('customers_page') }}" class="view-btn">
+<div class="container">
+    <div class="header-section">
+        <h1>Customer History - {{ customer.company }}</h1>
+        <a href="{{ url_for('customers_page') }}" class="awesome-btn">
             <i class="fas fa-arrow-left"></i> Back to Customers
         </a>
     </div>
 
-    <div class="customer-stats">
+    <div class="stats-grid">
         <div class="stat-card">
-            <div class="value">{{ total_purchases }}</div>
-            <div class="label">Total Purchases</div>
+            <div class="stat-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Total Purchases</h3>
+                <p class="stat-value">{{ total_purchases }}</p>
+            </div>
         </div>
+        
         <div class="stat-card">
-            <div class="value">${{ "%.2f"|format(total_spent) }}</div>
-            <div class="label">Total Spent</div>
+            <div class="stat-icon">
+                <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Total Spent</h3>
+                <p class="stat-value">${{ "%.2f"|format(total_spent) }}</p>
+            </div>
         </div>
+        
         <div class="stat-card">
-            <div class="value">{{ last_purchase_date }}</div>
-            <div class="label">Last Purchase</div>
+            <div class="stat-icon">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="stat-content">
+                <h3>Last Purchase</h3>
+                <p class="stat-value">{{ last_purchase_date }}</p>
+            </div>
         </div>
     </div>
 
-    <div class="purchase-timeline">
-        <h2><i class="fas fa-history"></i> Purchase History</h2>
-        {% for purchase in purchases %}
-        <div class="timeline-item">
-            <div class="timeline-date">
-                {{ purchase.date.strftime('%b %d, %Y') }}
+    <div class="form-section">
+        <h2 class="section-title">
+            <i class="fas fa-history"></i>
+            Purchase History
+        </h2>
+
+        <div class="table-container">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Items</th>
+                        <th>Total Amount</th>
+                        <th>Status</th>
+                        <th>Reference</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for purchase in purchases %}
+                    <tr>
+                        <td>{{ purchase.date.strftime('%Y-%m-%d') }}</td>
+                        <td>
+                            <ul class="items-list">
+                               
+                            </ul>
+                        </td>
+                        <td>${{ "%.2f"|format(purchase.total) }}</td>
+                        <td>
+                            <span class="badge {% if purchase.status == 'paid' %}badge-success{% else %}badge-warning{% endif %}">
+                                {{ purchase.status|title }}
+                            </span>
+                        </td>
+                        <td>{{ purchase.reference_no }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <h2 class="section-title">
+            <i class="fas fa-user"></i>
+            Customer Details
+        </h2>
+        <div class="customer-details">
+            <div class="detail-row">
+                <label>Company:</label>
+                <span>{{ customer.company }}</span>
             </div>
-            <div class="timeline-content">
-                <h3>Order #{{ purchase.order_id }}</h3>
-                <div class="purchase-details">
-                    <table class="sales-table">
-                        <thead>
-                            <tr>
-                                <th>Product</th>
-                                <th>Quantity</th>
-                                <th>Price</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for item in purchase.items %}
-                            <tr>
-                                <td>{{ item.name }}</td>
-                                <td>{{ item.quantity }}</td>
-                                <td>${{ "%.2f"|format(item.price) }}</td>
-                                <td class="total-column">${{ "%.2f"|format(item.price * item.quantity) }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="3" style="text-align: right;"><strong>Order Total:</strong></td>
-                                <td class="total-column">${{ "%.2f"|format(purchase.total) }}</td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
+            <div class="detail-row">
+                <label>Contact Name:</label>
+                <span>{{ customer.name }}</span>
+            </div>
+            <div class="detail-row">
+                <label>Email:</label>
+                <span>{{ customer.email }}</span>
+            </div>
+            <div class="detail-row">
+                <label>Phone:</label>
+                <span>{{ customer.phone }}</span>
+            </div>
+            <div class="detail-row">
+                <label>Customer Type:</label>
+                <span>{{ customer.type }}</span>
             </div>
         </div>
-        {% endfor %}
     </div>
 </div>
 {% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-icon i {
+    font-size: 1.5rem;
+    color: white;
+}
+
+.stat-content h3 {
+    color: var(--text-color);
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.stat-value {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.items-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.items-list li {
+    margin-bottom: 5px;
+}
+
+.customer-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    background: var(--background-light);
+    border-radius: 4px;
+}
+
+.detail-row {
+    display: flex;
+    gap: 10px;
+}
+
+.detail-row label {
+    font-weight: 500;
+    color: var(--primary-color);
+    min-width: 120px;
+}
+
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .customer-details {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
 {% endblock %}

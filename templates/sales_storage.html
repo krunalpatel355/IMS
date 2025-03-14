@@ -1,51 +1,332 @@
 {% extends "base.html" %}
 
+{% block extra_css %}
+<style>
+    .badge {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    .badge-pending {
+        background-color: rgba(243, 156, 18, 0.2);
+        color: #f39c12;
+    }
+
+    .badge-paid {
+        background-color: rgba(46, 204, 113, 0.2);
+        color: var(--success-color);
+    }
+
+    .badge-cancelled {
+        background-color: rgba(231, 76, 60, 0.2);
+        color: var(--danger-color);
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+    }
+
+    .action-btn {
+        padding: 6px;
+        border: none;
+        border-radius: 4px;
+        color: white;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        transition: all 0.3s ease;
+    }
+
+    .view-btn {
+        background-color: var(--secondary-color);
+    }
+
+    .print-btn {
+        background-color: var(--primary-color);
+    }
+
+    .edit-btn {
+        background-color: var(--warning-color);
+    }
+
+    .action-btn:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+        background-color: white;
+        margin: 5% auto;
+        width: 80%;
+        max-width: 800px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .modal-header {
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .modal-body {
+        padding: 20px;
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+
+    .close-button {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--text-color);
+    }
+
+    .close-button:hover {
+        color: var(--danger-color);
+    }
+
+    .container {
+        padding: 20px;
+    }
+
+    .table-container {
+        margin-top: 20px;
+        overflow-x: auto;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 20px;
+    }
+
+    .modern-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .modern-table th,
+    .modern-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+
+    .modern-table th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .modern-table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    .no-data-message {
+        text-align: center;
+        padding: 40px;
+        color: #666;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin: 20px 0;
+    }
+
+    .header-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .search-section {
+        flex: 1;
+        max-width: 300px;
+        margin-right: 20px;
+    }
+
+    .search-section input {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 0.9rem;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="sales-container">
+<div class="container">
     <div class="header-section">
         <h1>Sales History</h1>
-        <a href="{{ url_for('sales_page') }}" class="btn btn-primary rm-td">
-            <i class="fas fa-plus"></i> New Sale
-        </a>
+        <div class="actions-bar">
+            <div class="search-section">
+                <input type="text" id="salesSearch" placeholder="Search sales...">
+            </div>
+            <a href="{{ url_for('sales_page') }}" class="add-button awesome-btn">
+                <i class="fas fa-plus"></i> New Sale
+            </a>
+        </div>
     </div>
 
-    <div class="table-responsive">
-        <table class="sales-table">
-            <thead>
-                <tr>
-                    <th>Receipt #</th>
-                    <th>Date</th>
-                    <th>Customer</th>
-                    <th>Payment Method</th>
-                    <th>Items</th>
-                    <th>Subtotal</th>
-                    <th>Discount</th>
-                    <th>Total</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for sale in sales %}
-                <tr>
-                    <td>{{ sale.receipt_number }}</td>
-                    <td>{{ sale.receipt_date }}</td>
-                    <td>{{ sale.customer }}</td>
-                    <td>{{ sale.payment_method }}</td>
-                    <td>{{ sale.items|length if sale.items is iterable else 0 }} items</td>
-                    <td>${{ "%.2f"|format(sale.subtotal) }}</td>
-                    <td>${{ "%.2f"|format(sale.discount) }}</td>
-                    <td class="total-column">${{ "%.2f"|format(sale.total) }}</td>
-                    <td>
-                        {% if sale.delivered == sale.total %}
-                            <span class="badge badge-success">Paid</span>
-                        {% else %}
-                            <span class="badge badge-warning">Pending</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="table-container">
+        {% if sales %}
+            <table class="modern-table" id="sales-table">
+                <thead>
+                    <tr>
+                        <th>Receipt #</th>  
+                        <th>Date</th>
+                        <th>Customer</th>
+                        <th>Total</th>
+                        <th>Delivered</th>
+                        <th>Deposited</th>
+                        <th>Status</th>
+                        <th>Reference</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sale in sales %}
+                    <tr>
+                        <td>{{ sale.receipt_number }}</td>
+                        <td>{{ sale.receipt_date }}</td>
+                        <td>{{ sale.customer }}</td>
+                        <td>${{ sale.total }}</td>
+                        <td>${{ sale.delivered }}</td>
+                        <td>${{ sale.deposited }}</td>
+                        <td>
+                            <span class="badge badge-{{ sale.status }}">
+                                {{ sale.status | capitalize }}
+                            </span>
+                        </td>
+                        <td>{{ sale.reference_no }}</td>
+                        <td class="action-buttons">
+                            <button class="action-btn view-btn" title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn print-btn" title="Print Receipt">
+                                <i class="fas fa-print"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="no-data-message">
+                <p>No sales records found.</p>
+            </div>
+        {% endif %}
     </div>
 </div>
+
+<div id="sale-details-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Sale Details</h2>
+            <button class="close-button">&times;</button>
+        </div>
+        <div class="modal-body">
+            <!-- Sale details will be inserted here -->
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('sale-details-modal');
+    const modalBody = modal.querySelector('.modal-body');
+    const closeButton = modal.querySelector('.close-button');
+    const salesSearch = document.getElementById('salesSearch');
+    const salesTable = document.getElementById('sales-table');
+
+    // Handle view button clicks
+    document.querySelectorAll('.view-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const row = this.closest('tr');
+            const receipt_number = row.cells[0].textContent;
+            const date = row.cells[1].textContent;
+            const customer = row.cells[2].textContent;
+            const itemsCell = row.cells[3];
+            const items = Array.from(itemsCell.childNodes)
+                .filter(node => node.nodeType === Node.TEXT_NODE)
+                .map(node => node.textContent.trim())
+                .filter(text => text);
+            const total = row.cells[4].textContent;
+            const delivered = row.cells[5].textContent;
+            const deposited = row.cells[6].textContent;
+            const status = row.cells[7].querySelector('span').textContent.trim();
+            const reference = row.cells[8].textContent;
+
+            modalBody.innerHTML = `
+                <div class="sale-details">
+                    <p><strong>Receipt #:</strong> ${receipt_number}</p>
+                    <p><strong>Date:</strong> ${date}</p>
+                    <p><strong>Customer:</strong> ${customer}</p>
+                    <p><strong>Items:</strong></p>
+                    <ul>
+                        ${items.map(item => `<li>${item}</li>`).join('')}
+                    </ul>
+                    <p><strong>Total:</strong> ${total}</p>
+                    <p><strong>Delivered:</strong> ${delivered}</p>
+                    <p><strong>Deposited:</strong> ${deposited}</p>
+                    <p><strong>Status:</strong> ${status}</p>
+                    <p><strong>Reference:</strong> ${reference}</p>
+                </div>
+            `;
+            modal.style.display = 'block';
+        });
+    });
+
+    // Handle print button clicks
+    document.querySelectorAll('.print-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const row = this.closest('tr');
+            const reference = row.cells[8].textContent;
+            window.location.href = `/sales/print/${reference}`;
+        });
+    });
+
+    // Close modal when clicking close button or outside the modal
+    closeButton.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+
+    // Handle search functionality
+    salesSearch.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const rows = salesTable.querySelectorAll('tbody tr');
+        
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+    });
+});
+</script>
 {% endblock %}

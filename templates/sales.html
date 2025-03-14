@@ -1,143 +1,227 @@
 {% extends "base.html" %}
-
 {% block content %}
-<div class="sales-container" style="padding: 2rem;max-width: 1200px;margin: 0 auto;">
+<div class="container">
     <div class="header-section">
-        <h1>Sales Receipt</h1>
-        <a href="{{ url_for('sales_storage') }}" class="btn btn-primary rm-td">All Sales</a>
+        <h1>New Sale</h1>
+        <a href="{{ url_for('sales_history') }}" class="awesome-btn">
+            <i class="fas fa-history"></i> View Sales History
+        </a>
     </div>
-    
-    <div class="checkout-container">
-        <div class="receipt-header">
-            <h1>Sales Receipt #<span id="receipt-number">{{ receipt_number }}</span></h1>
+
+    <form id="sales-form" class="form-section">
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Receipt Number</label>
+                <input type="text" id="receipt-number" value="{{ receipt_number }}" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label>Receipt Date</label>
+                <input type="date" id="receipt-date" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Customer</label>
+                <select id="customer" required>
+                    <option value="">Select Customer</option>
+                    {% for customer in customers %}
+                    <option value="{{ customer.company }}" data-email="{{ customer.email }}">
+                        {{ customer.company }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="email" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label>Payment Method</label>
+                <select id="payment-method" required>
+                    <option value="cash">Cash</option>
+                    <option value="card">Credit Card</option>
+                    <option value="bank">Bank Transfer</option>
+                    <option value="check">Check</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Reference No.</label>
+                <input type="text" id="reference-no">
+            </div>
+            
+            <div class="form-group">
+                <label>Deposit To</label>
+                <select id="deposit-to" required>
+                    <option value="cash">Cash Account</option>
+                    <option value="bank">Bank Account</option>
+                </select>
+            </div>
         </div>
 
-        <form id="sales-form" class="receipt-form" novalidate>
-            <div class="form-section">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="customer">Customer</label>
-                        <select id="customer" class="form-control-sm" required>
-                            <option value="daily-sales">Daily Sales</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" class="form-control-sm" placeholder="Email">
-                    </div>
-                    <div class="form-group">
-                        <label for="receipt-date">Sales Receipt Date</label>
-                        <input type="date" id="receipt-date" class="form-control-sm" required>
-                    </div>
+        <div class="table-container">
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Service Date</th>
+                        <th>Product/Service</th>
+                        <th>Description</th>
+                        <th>Available Stock</th>
+                        <th>Quantity</th>
+                        <th>Unit Price</th>
+                        <th>Amount</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="sales-entries">
+                    <tr class="item-row">
+                        <td>1</td>
+                        <td><input type="date" class="form-control-sm" required></td>
+                        <td>
+                            <select class="form-control-sm product-select" required>
+                                <option value="">Select Product</option>
+                                {% for product in inventory %}
+                                <option value="{{ product.name }}" 
+                                        data-price="{{ product.price }}"
+                                        data-stock="{{ product.stock }}">
+                                    {{ product.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td><input type="text" class="form-control-sm" placeholder="Optional"></td>
+                        <td class="stock-display">-</td>
+                        <td><input type="number" class="form-control-sm quantity-input" min="1" value="1" required></td>
+                        <td><input type="number" class="form-control-sm price-input" step="0.01" value="0.00" required></td>
+                        <td class="amount">0.00</td>
+                        <td>
+                            <button type="button" class="delete-row-btn" title="Remove Item">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <button type="button" id="add-row" class="awesome-btn">
+                <i class="fas fa-plus"></i> Add Item
+            </button>
+        </div>
+
+        <div class="totals-section">
+            <div class="totals-grid">
+                <div class="total-row">
+                    <label>Subtotal:</label>
+                    <span class="amount" id="subtotal">0.00</span>
+                </div>
+                <div class="total-row">
+                    <label>Discount:</label>
+                    <input type="number" id="discount" class="form-control-sm" min="0" step="0.01" value="0.00">
+                </div>
+                <div class="total-row">
+                    <label>Total:</label>
+                    <span class="total-amount" id="total">0.00</span>
+                </div>
+                <div class="total-row">
+                    <label>Amount Delivered:</label>
+                    <input type="number" id="delivered" class="form-control-sm" min="0" step="0.01" value="0.00">
+                </div>
+                <div class="total-row">
+                    <label>Amount Deposited:</label>
+                    <input type="number" id="deposited" class="form-control-sm" min="0" step="0.01" value="0.00">
                 </div>
             </div>
+        </div>
 
-            <div class="form-section">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="payment-method">Payment Method</label>
-                        <select id="payment-method" class="form-control-sm" required>
-                            <option value="">Choose payment method</option>
-                            <option value="cash">Cash</option>
-                            <option value="check">Check</option>
-                            <option value="credit-card">Credit Card</option>
-                            <option value="bank-transfer">Bank Transfer</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="reference-no">Reference No.</label>
-                        <input type="text" id="reference-no" class="form-control-sm">
-                    </div>
-                    <div class="form-group">
-                        <label for="deposit-to">Deposit to</label>
-                        <select id="deposit-to" class="form-control-sm" required>
-                            <option value="clearing">Clearing Account</option>
-                            <option value="savings">Savings Account</option>
-                        </select>
-                    </div>
-                </div>
+        <div class="form-actions">
+            <button type="submit" id="submit-button" class="btn-submit">
+                <i class="fas fa-save"></i>
+                Save Sale
+            </button>
+            <div id="loading-spinner" class="spinner">
+                <i class="fas fa-circle-notch fa-spin"></i>
+                Processing...
             </div>
+        </div>
 
-            <div class="form-section">
-                <table class="sales-table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Service Date</th>
-                            <th>Product/Service</th>
-                            <th>Description</th>
-                            <th>QTY</th>
-                            <th>Rate</th>
-                            <th>Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody id="sales-entries">
-                        <tr>
-                            <td>1</td>
-                            <td><input type="date" class="form-control-sm" required></td>
-                            <td><input type="text" class="form-control-sm" required></td>
-                            <td><input type="text" class="form-control-sm" placeholder="Optional"></td>
-                            <td><input type="number" class="form-control-sm" min="1" value="1" required></td>
-                            <td><input type="number" class="form-control-sm" step="0.01" value="0.00" required></td>
-                            <td class="amount">0.00</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <button type="button" id="add-row" class="btn btn-secondary btn-sm">
-                    <i class="fas fa-plus"></i> Add Row
-                </button>
-            </div>
-
-            <div class="form-section totals-section">
-                <div class="totals-grid">
-                    <div class="total-row">
-                        <label>Subtotal:</label>
-                        <span id="subtotal" class="amount">0.00</span>
-                    </div>
-                    <div class="total-row">
-                        <label>Discount:</label>
-                        <div class="discount-input">
-                            <input type="number" id="discount" class="form-control-sm" min="0" step="0.01" value="0.00">
-                        </div>
-                    </div>
-                    <div class="total-row">
-                        <label>Total Amount:</label>
-                        <span id="total" class="amount total-amount">0.00</span>
-                    </div>
-                    <div class="total-row">
-                        <label>Delivered Amount:</label>
-                        <div class="delivered-input">
-                            <input type="number" id="delivered" class="form-control-sm" min="0" step="0.01" value="0.00">
-                        </div>
-                    </div>
-                    <div class="total-row">
-                        <label>Deposited Amount:</label>
-                        <div class="deposited-input">
-                            <input type="number" id="deposited" class="form-control-sm" min="0" step="0.01" value="0.00">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary" id="submit-button">
-                    <i class="fas fa-check"></i> Create Receipt
-                </button>
-                <div id="loading-spinner" class="spinner" style="display: none;">
-                    <i class="fas fa-spinner fa-spin"></i> Processing...
-                </div>
-            </div>
-        </form>
-    </div>
-    
-    <div id="success-message" class="alert alert-success" style="display: none;">
-        <i class="fas fa-check-circle"></i>
-        <span class="message-text"></span>
-    </div>
+        <div id="success-message" class="alert alert-success" style="display: none;">
+            <i class="fas fa-check-circle"></i>
+            <span class="message-text"></span>
+        </div>
+    </form>
 </div>
+
+{% block extra_css %}
+<style>
+.form-control-sm {
+    width: 100%;
+    padding: 4px 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.modern-table input,
+.modern-table select {
+    margin: 0;
+}
+
+.stock-display {
+    font-weight: 500;
+}
+
+.stock-display.low {
+    color: var(--danger-color);
+}
+
+.delete-row-btn {
+    background: var(--danger-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 8px;
+    cursor: pointer;
+}
+
+.delete-row-btn:hover {
+    opacity: 0.9;
+}
+
+.spinner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--secondary-color);
+    font-size: 0.9rem;
+}
+
+.spinner i {
+    font-size: 1.2rem;
+}
+
+.alert {
+    margin-top: 20px;
+}
+
+.alert-success {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.alert-success i {
+    font-size: 1.2rem;
+}
+
+#add-row {
+    margin-top: 10px;
+}
+</style>
 {% endblock %}
 
-{% block scripts %}
+{% block extra_scripts %}
 <script src="{{ url_for('static', filename='js/checkout.js') }}"></script>
+{% endblock %}
 {% endblock %}

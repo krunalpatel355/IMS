@@ -1,60 +1,279 @@
 {% extends "base.html" %}
-
 {% block content %}
-<div class="product-detail-container">
-    <h1>{{ product.name if product and product.name else 'Product Not Found' }}</h1>
-    
-    <div class="split-view">
-        <div class="left-panel">
-            <h2>Product Information</h2>
-            {% if product %}
-            <div class="detail-item">
-                <label>Name:</label>
-                <span>{{ product.name }}</span>
-            </div>
-            <div class="detail-item">
-                <label>Brand:</label>
-                <span>{{ product.brand if product.brand is defined else 'N/A' }}</span>
-            </div>
-            <div class="detail-item">
-                <label>Part Number:</label>
-                <span>{{ product.part_number if product.part_number is defined else 'N/A' }}</span>
-            </div>
-            <div class="detail-item">
-                <label>Application:</label>
-                <span>{{ product.application if product.application is defined else 'N/A' }}</span>
-            </div>
-            <div class="detail-item">
-                <label>Description:</label>
-                <p>{{ product.description if product.description is defined else 'No description available.' }}</p>
-            </div>
-            <div class="detail-item">
-                <label>Stock:</label>
-                <span>{{ product.stock if product.stock is defined else 0 }}</span>
-            </div>
-            <div class="detail-item">
-                <label>Price:</label>
-                <span>${{ "%.2f"|format(product.price if product.price is defined else 0.00) }}</span>
-            </div>
-            {% else %}
-            <p>Product information not available.</p>
-            {% endif %}
-        </div>
-        
-        <div class="right-panel">
-            <div class="customer-search">
-                <input type="text" placeholder="Search customers...">
-                <div class="customer-list">
-                    {% for customer in customers %}
-                    <div class="customer-item">{{ customer.name }}</div>
-                    {% endfor %}
-                </div>
-            </div>
-
-            <div class="actions">
-                <a href="{{ url_for('inventory_page') }}" class="btn-primary">Back to Inventory</a>
-            </div>
+<div class="container">
+    <div class="header-section">
+        <h1>{{ product.name }}</h1>
+        <div class="actions-bar">
+            <a href="{{ url_for('edit_inventory', item_id=product._id) }}" class="awesome-btn">
+                <i class="fas fa-edit"></i> Edit Product
+            </a>
+            <a href="{{ url_for('products') }}" class="awesome-btn">
+                <i class="fas fa-arrow-left"></i> Back to Products
+            </a>
         </div>
     </div>
+
+    <div class="product-grid">
+        <div class="product-image-section">
+            <img src="{{ url_for('static', filename='uploads/' + (product.photo or 'product1.jpg')) }}" 
+                 alt="{{ product.name }}" 
+                 class="product-main-image">
+            <div class="product-status {% if product.stock > 0 %}in-stock{% else %}out-of-stock{% endif %}">
+                {% if product.stock > 0 %}
+                    <i class="fas fa-check-circle"></i> In Stock ({{ product.stock }})
+                {% else %}
+                    <i class="fas fa-times-circle"></i> Out of Stock
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="product-info-section">
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Brand</label>
+                    <span>{{ product.brand }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Part Number</label>
+                    <span>{{ product.part_number }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Price</label>
+                    <span class="price">${{ "%.2f"|format(product.price) }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Stock Level</label>
+                    <span>{{ product.stock }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Owner</label>
+                    <span>{{ product.owner }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Application</label>
+                    <span>{{ product.application }}</span>
+                </div>
+                {% if product.cost %}
+                <div class="info-item">
+                    <label>Landing Cost</label>
+                    <span>${{ "%.2f"|format(product.cost) }}</span>
+                </div>
+                {% endif %}
+                {% if product.rising %}
+                <div class="info-item">
+                    <label>Price Trend</label>
+                    <span>{{ product.rising }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            {% if product.description %}
+            <div class="product-description">
+                <h3>Description</h3>
+                <p>{{ product.description }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if product.stock > 0 %}
+    <div class="quick-sale-section form-section">
+        <h2 class="section-title">
+            <i class="fas fa-shopping-cart"></i>
+            Quick Sale
+        </h2>
+        <form id="quick-sale-form" class="quick-sale-form">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Customer</label>
+                    <select id="customer-select" required>
+                        <option value="">Select Customer</option>
+                        {% for customer in customers %}
+                        <option value="{{ customer._id }}">{{ customer.company }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Quantity</label>
+                    <input type="number" id="quantity" min="1" max="{{ product.stock }}" value="1" required>
+                </div>
+                <div class="form-group">
+                    <label>Total</label>
+                    <input type="text" id="total" readonly value="${{ "%.2f"|format(product.price) }}">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-check"></i>
+                        Process Sale
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+    {% endif %}
 </div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.product-grid {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.product-image-section {
+    position: relative;
+}
+
+.product-main-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.product-status {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.product-status.in-stock {
+    background-color: rgba(46, 204, 113, 0.2);
+    color: var(--success-color);
+}
+
+.product-status.out-of-stock {
+    background-color: rgba(231, 76, 60, 0.2);
+    color: var(--danger-color);
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.info-item {
+    padding: 15px;
+    background: var(--background-light);
+    border-radius: 8px;
+}
+
+.info-item label {
+    display: block;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.info-item span {
+    display: block;
+    color: var(--primary-color);
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.info-item .price {
+    color: var(--success-color);
+    font-size: 1.3rem;
+}
+
+.product-description {
+    margin-top: 30px;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.product-description h3 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.quick-sale-form {
+    max-width: 800px;
+}
+
+@media (max-width: 768px) {
+    .product-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .product-image-section {
+        order: -1;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const quantityInput = document.getElementById('quantity');
+    const totalInput = document.getElementById('total');
+    const productPrice = parseFloat("{{ product.price }}");
+    
+    function updateTotal() {
+        const quantity = parseInt(quantityInput.value) || 0;
+        const total = (quantity * productPrice).toFixed(2);
+        totalInput.value = `$${total}`;
+    }
+    
+    quantityInput?.addEventListener('input', updateTotal);
+    
+    const quickSaleForm = document.getElementById('quick-sale-form');
+    quickSaleForm?.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const customerId = document.getElementById('customer-select').value;
+        const quantity = parseInt(quantityInput.value);
+        
+        if (!customerId) {
+            alert('Please select a customer');
+            return;
+        }
+        
+        try {
+            const total = parseFloat((quantity * productPrice).toFixed(2));
+            const response = await fetch('/quick_sale', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    customer_id: customerId,
+                    product_id: '{{ product._id }}',
+                    quantity: quantity,
+                    unit_price: parseFloat(productPrice.toFixed(2)),
+                    total: total
+                })
+            });
+            
+            const result = await response.json();
+            if (response.ok) {
+                alert('Sale processed successfully!');
+                window.location.reload();
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (error) {
+            alert('Error processing sale: ' + error.message);
+        }
+    });
+});
+</script>
 {% endblock %}

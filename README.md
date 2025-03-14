@@ -1,149 +1,216 @@
 # Inventory Management System (IMS)
 
-A Flask-based Inventory Management System for tracking products, customers, and sales with receipt generation capabilities.
+A modern Flask-based Inventory Management System with MongoDB integration, focused on product tracking, customer management, and sales processing.
 
-## Features
+## Core Features
 
-- Product Inventory Management
-  - Add, edit, and delete inventory items
-  - Track stock levels, prices, and product details
-  - Product categorization and search
-  - Detailed product information including brand, owner, part numbers
-- Customer Management
-  - Customer profiles with company information
-  - Customer purchase history tracking
-  - Customer type categorization (Wholesale, etc.)
-- Sales Management
-  - Generate unique receipt numbers
-  - Multiple payment methods support
-  - Track deposits and delivery status
-  - Reference number generation
-  - Sales history storage
-- Additional Features
-  - Interactive product detail views
-  - Sales receipt generation
-  - CSRF protection
-  - Customer purchase statistics
+### Inventory Management
+- Add, edit, and delete products with detailed information
+- Image upload support with validation (JPG, PNG up to 5MB)
+- Real-time stock level tracking
+- Advanced product search functionality
+- Automated product ID generation
+- Track costs, prices, and profit margins
 
-## Technology Stack
+### Customer Management
+- Comprehensive customer profiles
+- Company and contact information storage
+- Purchase history tracking
+- Customer type categorization
+- Email validation and verification
 
-- Python 3.x
+### Sales Processing
+- Generate unique receipt numbers automatically
+- Multiple payment method support
+- Deposit and delivery tracking
+- Reference number generation
+- Real-time sales history
+- Automatic status updates (paid/pending)
+
+### Security Features
+- CSRF protection
+- Secure file upload handling
+- Input validation and sanitization
+- MongoDB injection prevention
+- Error handling and logging
+
+## Technical Stack
+
+### Backend
+- Python 3.8+
 - Flask 2.3.3
+- MongoDB 4.x
+- PyMongo 4.5.0
+
+### Frontend
+- HTML5
+- CSS3
+- JavaScript (ES6+)
+- Font Awesome Icons
+
+### Security & Forms
 - Flask-WTF 1.1.1
+- Werkzeug 2.3.7
+- Email validation
+
+### Development & Deployment
 - Python-dotenv 1.0.0
-- MongoDB support (via pymongo 4.5.0)
-- Gunicorn 21.2.0 for production deployment
-- HTML/CSS
-- JavaScript
-
-## Prerequisites
-
-- Python 3.8 or higher
-- pip (Python package installer)
-- Git
+- Gunicorn 21.2.0
+- DNSPython 2.4.2
 
 ## Installation
 
 1. Clone the repository:
-```bash
-git clone <repository-url>
-cd project
-```
+   ```bash
+   git clone <repository-url>
+   cd project
+   ```
 
 2. Create and activate virtual environment:
-```bash
-python -m venv venv
-# On Windows
-venv\Scripts\activate
-# On Unix or MacOS
-source venv/bin/activate
-```
+   ```bash
+   python -m venv venv
+   
+   # Windows
+   venv\Scripts\activate
+   
+   # Unix/MacOS
+   source venv/bin/activate
+   ```
 
 3. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-4. Create a .env file in the project root:
-```
-FLASK_APP=main.py
-FLASK_ENV=development
-SECRET_KEY=your-secret-key-here
-```
+4. Configure environment:
+   Create a .env file with:
+   ```
+   FLASK_APP=main.py
+   FLASK_ENV=development
+   SECRET_KEY=your-secure-secret-key
+   MONGO_URI=mongodb://localhost:27017/
+   ```
 
-5. Run the application:
-```bash
-# Development
-python main.py
+5. Initialize MongoDB:
+   - Install MongoDB Community Edition
+   - Start MongoDB service
+   - Database will be auto-initialized on first run
 
-# Production
-gunicorn main:app
-```
+6. Run the application:
+   ```bash
+   # Development
+   python main.py
 
-The application will be available at `http://localhost:5000` (development) or `http://localhost:8000` (production)
+   # Production
+   gunicorn main:app
+   ```
 
 ## Project Structure
 
 ```
 project/
-├── main.py                 # Main application file with routes and logic
-├── static/                 # Static files (CSS, JS, images)
-│   ├── style.css          # Main stylesheet
-│   └── js/
-│       └── checkout.js    # JavaScript for checkout functionality
+├── main.py                 # Application entry point and route definitions
+├── static/                 # Static assets
+│   ├── style.css          # Global styles
+│   ├── js/                # JavaScript modules
+│   │   └── checkout.js    # Sales processing logic
+│   └── uploads/           # Product images storage
 ├── templates/             # HTML templates
-│   ├── base.html         # Base template
-│   ├── inventory.html    # Inventory management
-│   ├── products.html     # Product listing
-│   ├── product_detail.html # Individual product view
-│   ├── add_inventory.html # Add new inventory
-│   ├── edit_inventory.html # Edit inventory items
+│   ├── base.html         # Base template with common elements
+│   ├── inventory.html    # Product inventory management
+│   ├── products.html     # Product catalog display
 │   ├── customers.html    # Customer management
-│   ├── add_customer.html # Add new customer
-│   ├── customer_history.html # Customer purchase history
-│   ├── sales.html       # Sales management
-│   └── sales_storage.html # Sales history
+│   └── sales.html        # Sales processing interface
 └── requirements.txt      # Project dependencies
+```
 
-## Configuration
+## Configuration Options
 
-The application uses environment variables for configuration:
-- `FLASK_APP`: Specifies the main application file
+### Application Settings
 - `FLASK_ENV`: Set to 'development' or 'production'
-- `SECRET_KEY`: Used for session management and CSRF protection
-- `MONGO_URI`: (Optional) MongoDB connection string if using MongoDB
+- `SECRET_KEY`: Used for session security
+- `MONGO_URI`: MongoDB connection string
+- `UPLOAD_FOLDER`: Product image storage location
+- `MAX_FILE_SIZE`: Maximum upload file size (5MB)
+- `ALLOWED_EXTENSIONS`: Permitted file types (jpg, png, jpeg)
 
-## Development Notes
+### Database Collections
+- `inventory`: Product information
+- `customers`: Customer records
+- `sales`: Sales transactions
+- `purchase_history`: Customer purchase records
 
-The application currently uses in-memory data structures but is prepared for MongoDB integration:
-- Collections are defined for: Inventory, Customers, Sales, and History
-- MongoDB connection strings can be configured via environment variables
-- Commented code includes MongoDB integration patterns
+## Development Guidelines
 
-For production deployment:
-1. Set up a MongoDB database
-2. Configure proper environment variables
-3. Use a strong SECRET_KEY
-4. Deploy behind a reverse proxy (nginx recommended)
-5. Enable HTTPS
-6. Set up proper logging
+### Code Style
+- Follow PEP 8 guidelines
+- Use type hints where applicable
+- Document functions and complex logic
+- Handle exceptions appropriately
 
-## Security Features
+### Database Operations
+- Use PyMongo's built-in security features
+- Implement proper indexing for performance
+- Validate data before insertion
+- Handle MongoDB connection errors gracefully
 
-- CSRF protection via Flask-WTF
+### Security Practices
+- Validate all user inputs
+- Sanitize data before display
+- Use CSRF tokens for forms
+- Implement proper file upload validation
 - Secure session management
-- Input validation and sanitization
-- File upload restrictions
-- Unique ID generation for receipts and references
+
+## Production Deployment
+
+1. Configure MongoDB:
+   - Enable authentication
+   - Set up proper indexes
+   - Configure backup strategy
+
+2. Server Setup:
+   - Use Gunicorn with Nginx
+   - Enable HTTPS
+   - Configure proper logging
+   - Set up monitoring
+
+3. Environment:
+   - Set FLASK_ENV to 'production'
+   - Use strong SECRET_KEY
+   - Configure proper MONGO_URI
+   - Set up error logging
+
+## Troubleshooting
+
+Common issues and solutions:
+
+1. MongoDB Connection:
+   - Check MongoDB service status
+   - Verify connection string
+   - Ensure proper network access
+
+2. File Uploads:
+   - Verify upload directory permissions
+   - Check file size limits
+   - Validate file types
+
+3. Performance Issues:
+   - Monitor MongoDB queries
+   - Check database indexes
+   - Review application logs
 
 ## Contributing
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+2. Create a feature branch
+3. Make changes following the coding standards
+4. Write/update tests if applicable
+5. Submit a pull request
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License. See LICENSE file for details.
+
+## Support
+
+For issues and feature requests, please use the GitHub issue tracker.

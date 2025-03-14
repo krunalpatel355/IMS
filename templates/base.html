@@ -6,28 +6,65 @@
     <title>Inventory Management System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <nav>
-        <div class="logo">
-            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
-        </div>
-        <div class="search-bar">
-            <input type="text" placeholder="Search...">
-        </div>
-        <div class="nav-links">
-            <a href="{{ url_for('inventory_page') }}" class="{{ 'active' if active == 'inventory' }}">Inventory</a>
-            <a href="{{ url_for('products') }}" class="{{ 'active' if active == 'products' }}">Product Details</a>
-            <a href="{{ url_for('customers_page') }}" class="{{ 'active' if active == 'customers' }}">Customers</a>
-            <a href="{{ url_for('sales_page') }}" class="{{ 'active' if active == 'sales' }}">Sales</a>
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="{{ url_for('inventory_page') }}" class="brand">
+                <i class="fas fa-boxes"></i>
+                IMS
+            </a>
+            <ul class="nav-links">
+                <li class="nav-item {% if active == 'inventory' %}active{% endif %}">
+                    <a href="{{ url_for('inventory_page') }}">
+                        <i class="fas fa-box"></i>
+                        Inventory
+                    </a>
+                </li>
+                <li class="nav-item {% if active == 'products' %}active{% endif %}">
+                    <a href="{{ url_for('products') }}">
+                        <i class="fas fa-shopping-basket"></i>
+                        Products
+                    </a>
+                </li>
+                <li class="nav-item {% if active == 'customers' %}active{% endif %}">
+                    <a href="{{ url_for('customers_page') }}">
+                        <i class="fas fa-users"></i>
+                        Customers
+                    </a>
+                </li>
+                <li class="nav-item {% if active == 'sales' %}active{% endif %}">
+                    <a href="{{ url_for('sales_page') }}">
+                        <i class="fas fa-cash-register"></i>
+                        Sales
+                    </a>
+                </li>
+            </ul>
         </div>
     </nav>
-    <main>
+
+    <main class="main-content">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
         {% block content %}{% endblock %}
     </main>
 
-    <!-- JavaScript -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    {% block scripts %}{% endblock %}
+    <footer class="main-footer">
+        <div class="footer-content">
+            <p>&copy; {{ now.year }} Inventory Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    {% block extra_scripts %}{% endblock %}
 </body>
 </html>

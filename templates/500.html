@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="error-container">
+    <div class="error-content">
+        <i class="fas fa-bug error-icon"></i>
+        <h1>500 - Internal Server Error</h1>
+        <p>Something went wrong on our end. Please try again later or contact support if the problem persists.</p>
+        <a href="{{ url_for('inventory_page') }}" class="awesome-btn">
+            <i class="fas fa-home"></i>
+            Return to Home
+        </a>
+    </div>
+</div>
+{% endblock %}
