@@ -127,18 +127,7 @@
                     <th>Amount</th>
                 </tr>
             </thead>
-            <tbody>
-                {% for item in sale.items %}
-                <tr>
-                    <td>{{ item.service_date }}</td>
-                    <td>{{ item.product }}</td>
-                    <td>{{ item.description }}</td>
-                    <td>{{ item.quantity }}</td>
-                    <td>${{ "%.2f"|format(item.rate|float) }}</td>
-                    <td>${{ "%.2f"|format(item.amount|float) }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
+            
         </table>
         
         <div class="totals">

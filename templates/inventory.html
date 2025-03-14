@@ -21,10 +21,7 @@
                     <th>Product</th>
                     <th>Part Number</th>
                     <th>Stock</th>
-                    <th>Min. Stock</th>
                     <th>Price</th>
-                    <th>Cost</th>
-                    <th>Owner</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
@@ -49,10 +46,7 @@
                             {{ item.stock }}
                         </span>
                     </td>
-                    <td>{{ item.min_stock|default(0) }}</td>
                     <td>${{ "%.2f"|format(item.price) }}</td>
-                    <td>${{ "%.2f"|format(item.cost) }}</td>
-                    <td>{{ item.owner }}</td>
                     <td>
                         <span class="badge {% if item.stock > 0 %}badge-success{% else %}badge-danger{% endif %}">
                             {% if item.stock > 0 %}In Stock{% else %}Out of Stock{% endif %}
@@ -124,7 +118,21 @@
 
 .action-buttons {
     display: flex;
-    gap: 8px;
+    gap: 10px;
+    justify-content: flex-start;
+}
+
+.action-btn {
+    padding: 6px;
+    border-radius: 4px;
+    color: white;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    transition: all 0.3s ease;
 }
 
 .view-btn {
@@ -137,6 +145,11 @@
 
 .delete-btn {
     background-color: var(--danger-color);
+}
+
+.action-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
 }
 
 .badge {

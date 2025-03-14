@@ -30,35 +30,77 @@
         <div class="product-info-section">
             <div class="info-grid">
                 <div class="info-item">
+                    <label>Category</label>
+                    <span>{{ product.category }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Sub Category</label>
+                    <span>{{ product.sub_category }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Tags</label>
+                    <span>{{ product.tags }}</span>
+                </div>
+                <div class="info-item">
+                    <label>SKU</label>
+                    <span>{{ product.sku }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Origin</label>
+                    <span>{{ product.origin }}</span>
+                </div>
+                <div class="info-item">
                     <label>Brand</label>
                     <span>{{ product.brand }}</span>
                 </div>
                 <div class="info-item">
-                    <label>Part Number</label>
-                    <span>{{ product.part_number }}</span>
+                    <label>Stock</label>
+                    <span>{{ product.stock }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Minimum Stock</label>
+                    <span>{{ product.min_stock }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Landing Cost</label>
+                    <span>${{ "%.2f"|format(product.cost) }}</span>
                 </div>
                 <div class="info-item">
                     <label>Price</label>
                     <span class="price">${{ "%.2f"|format(product.price) }}</span>
                 </div>
                 <div class="info-item">
-                    <label>Stock Level</label>
-                    <span>{{ product.stock }}</span>
+                    <label>Location</label>
+                    <span>{{ product.location }}</span>
                 </div>
                 <div class="info-item">
-                    <label>Owner</label>
-                    <span>{{ product.owner }}</span>
+                    <label>Condition</label>
+                    <span>{{ product.condition }}</span>
                 </div>
                 <div class="info-item">
                     <label>Application</label>
                     <span>{{ product.application }}</span>
                 </div>
-                {% if product.cost %}
                 <div class="info-item">
-                    <label>Landing Cost</label>
-                    <span>${{ "%.2f"|format(product.cost) }}</span>
+                    <label>Supplier</label>
+                    <span>{{ product.supplier }}</span>
                 </div>
-                {% endif %}
+                <div class="info-item">
+                    <label>Part Number</label>
+                    <span>{{ product.part_number }}</span>
+                </div>
+                <div class="info-item">
+                    <label>OEM Number</label>
+                    <span>{{ product.oem_number }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Warranty</label>
+                    <span>{{ product.warranty }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Certifications</label>
+                    <span>{{ product.certifications }}</span>
+                </div>
                 {% if product.rising %}
                 <div class="info-item">
                     <label>Price Trend</label>

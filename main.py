@@ -595,6 +595,58 @@ def print_receipt(reference_no):
         flash(f'Error generating receipt: {str(e)}')
         return redirect(url_for('sales_history'))
 
+@app.route('/edit_sale/<sale_id>', methods=['GET', 'POST'])
+def edit_sale(sale_id):
+    form = FlaskForm()
+    try:
+        # Find sale by reference number
+        sale = sales_collection.find_one({'reference_no': sale_id})
+        if not sale:
+            flash('Sale not found')
+            return redirect(url_for('sales_history'))
+
+        if request.method == 'POST' and form.validate_on_submit():
+            data = request.get_json()
+            if not data:
+                data = request.form.to_dict()
+
+            # Update sale document
+            update_data = {
+                'receipt_date': data.get('receipt_date'),
+                'payment_method': data.get('payment_method'),
+                'subtotal': float(data.get('subtotal', 0)),
+                'discount': float(data.get('discount', 0)),
+                'total': float(data.get('total', 0)),
+                'delivered': float(data.get('delivered', 0)),
+                'deposited': float(data.get('deposited', 0))
+            }
+
+            # Update status based on payment
+            if update_data['delivered'] >= update_data['total']:
+                update_data['status'] = 'paid'
+            else:
+                update_data['status'] = 'pending'
+
+            result = sales_collection.update_one(
+                {'reference_no': sale_id},
+                {'$set': update_data}
+            )
+
+            if result.modified_count > 0:
+                if request.is_json:
+                    return jsonify({'success': True, 'message': 'Sale updated successfully'})
+                flash('Sale updated successfully!')
+                return redirect(url_for('sales_history'))
+            else:
+                if request.is_json:
+                    return jsonify({'error': 'No changes were made'})
+                flash('No changes were made to the sale.')
+        # print(sale)
+        return render_template('edit_sale.html', sale=sale, form=form)
+    except Exception as e:
+        flash(f'Error updating sale: {str(e)}')
+        return redirect(url_for('sales_history'))
+
 if __name__ == '__main__':
     # Initialize collections with sample data if empty
     if inventory_collection.count_documents({}) == 0:

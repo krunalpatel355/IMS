@@ -85,17 +85,17 @@
         </div>
 
         <div class="form-actions">
-            <button type="submit" class="btn-submit">
-                <i class="fas fa-save"></i>
-                Save Changes
-            </button>
-            <a href="#" 
-               class="btn-danger"
-               onclick="deleteCustomer('{{ customer._id }}', '{{ customer.company }}')"
-               title="Delete Customer">
-                <i class="fas fa-trash"></i>
-                Delete Customer
-            </a>
+            <div class="action-buttons">
+                <button type="submit" class="action-btn save-btn" title="Save Changes">
+                    <i class="fas fa-save"></i>
+                </button>
+                <a href="#" 
+                   class="action-btn delete-btn"
+                   onclick="deleteCustomer('{{ customer._id }}', '{{ customer.company }}')"
+                   title="Delete Customer">
+                    <i class="fas fa-trash"></i>
+                </a>
+            </div>
         </div>
     </form>
 </div>
@@ -134,6 +134,40 @@ label[for="name"]::after,
 label[for="email"]::after,
 label[for="phone"]::after {
     display: inline;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+}
+
+.action-btn {
+    padding: 6px;
+    border-radius: 4px;
+    color: white;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.save-btn {
+    background-color: var(--success-color);
+}
+
+.delete-btn {
+    background-color: var(--danger-color);
+}
+
+.action-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
 }
 </style>
 {% endblock %}

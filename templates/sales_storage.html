@@ -27,21 +27,23 @@
 
     .action-buttons {
         display: flex;
-        gap: 8px;
+        gap: 10px;
+        justify-content: flex-start;
     }
 
     .action-btn {
         padding: 6px;
-        border: none;
         border-radius: 4px;
         color: white;
-        cursor: pointer;
+        text-decoration: none;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         width: 28px;
         height: 28px;
         transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
     }
 
     .view-btn {
@@ -50,10 +52,6 @@
 
     .print-btn {
         background-color: var(--primary-color);
-    }
-
-    .edit-btn {
-        background-color: var(--warning-color);
     }
 
     .action-btn:hover {
@@ -219,13 +217,18 @@
                             </span>
                         </td>
                         <td>{{ sale.reference_no }}</td>
-                        <td class="action-buttons">
-                            <button class="action-btn view-btn" title="View Details">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="action-btn print-btn" title="Print Receipt">
-                                <i class="fas fa-print"></i>
-                            </button>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="{{ url_for('edit_sale', sale_id=sale.reference_no) }}" class="action-btn edit-btn" title="Edit Sale" style="background-color: #a1e539;;">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button class="action-btn view-btn" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="action-btn print-btn" title="Print Receipt">
+                                    <i class="fas fa-print"></i>
+                                </button>
+                            </div>
                         </td>
                     </tr>
                     {% endfor %}
@@ -301,7 +304,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.print-btn').forEach(button => {
         button.addEventListener('click', function() {
             const row = this.closest('tr');
-            const reference = row.cells[8].textContent;
+            const reference = row.cells[7].textContent;
             window.location.href = `/sales/print/${reference}`;
         });
     });

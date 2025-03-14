@@ -1,0 +1,42 @@
+   <!-- {% for item in sale.items %}
+                        <tr>
+                            <td>{{ item.product }}</td>
+                            <td>{{ item.description }}</td>
+                            <td>
+                                <input type="number" 
+                                       name="quantities[]" 
+                                       value="{{ item.quantity }}" 
+                                       min="1" 
+                                       class="form-control-sm quantity-input" 
+                                       required>
+                            </td>
+                            <td>
+                                <input type="number" 
+                                       name="rates[]" 
+                                       value="{{ item.rate }}" 
+                                       step="0.01" 
+                                       class="form-control-sm rate-input" 
+                                       required>
+                            </td>
+                            <td class="amount">${{ "%.2f"|format(item.amount|float) }}</td>
+                        </tr>
+        {% endfor %} -->
+
+
+
+
+
+
+        in sales recipt part 
+        <tbody>
+            {% for item in sale.items %}
+            <tr>
+                <td>{{ item.service_date }}</td>
+                <td>{{ item.product }}</td>
+                <td>{{ item.description }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>${{ "%.2f"|format(item.rate|float) }}</td>
+                <td>${{ "%.2f"|format(item.amount|float) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
