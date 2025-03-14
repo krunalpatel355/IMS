@@ -1,216 +1,252 @@
-# Inventory Management System (IMS)
+# Project Bolt 🚀
 
-A modern Flask-based Inventory Management System with MongoDB integration, focused on product tracking, customer management, and sales processing.
+[![Made with Flask](https://img.shields.io/badge/Made%20with-Flask-blue.svg)](https://flask.palletsprojects.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-4.4+-green.svg)](https://www.mongodb.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Core Features
+<div align="center">
+  <h3>A Modern Inventory Management System</h3>
+  <p>Streamline your business operations with our powerful and intuitive IMS solution.</p>
+</div>
+
+<br>
+
+## ✨ Features
+
+<table>
+  <tr>
+    <td>📦 <b>Inventory Management</b></td>
+    <td>🛒 <b>Sales Processing</b></td>
+    <td>👥 <b>Customer Management</b></td>
+  </tr>
+  <tr>
+    <td>
+      • Real-time stock tracking<br>
+      • Low stock alerts<br>
+      • Product categorization
+    </td>
+    <td>
+      • Quick checkout process<br>
+      • Digital receipts<br>
+      • Payment tracking
+    </td>
+    <td>
+      • Customer profiles<br>
+      • Purchase history<br>
+      • Contact management
+    </td>
+  </tr>
+</table>
+
+## 🛠️ Built With
+
+- **Backend Framework**: Flask (Python)
+- **Database**: MongoDB
+- **Frontend**: HTML5, CSS3, JavaScript
+- **Additional Tools**:
+  - Flask-WTF for form handling
+  - BeautifulSoup for data parsing
+  - Requests for HTTP operations
+
+## 🛠️ Technical Stack
+
+- **Backend**: 
+  - Flask 2.0.1 with Flask-WTF for form handling
+  - MongoDB 4.4+ for database
+  - Python 3.7+ environment
+- **Frontend**: 
+  - HTML5, CSS3, JavaScript (Vanilla)
+  - Font Awesome for icons
+  - Responsive design with CSS Grid/Flexbox
+- **Security**:
+  - CSRF protection
+  - File upload validation
+  - Input sanitization
+  - Error handling
+- **Performance**:
+  - Automated link performance monitoring
+  - Response time tracking
+  - Health checks
+  - Error logging system
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Python 3.7+
+- MongoDB 4.4+
+- Git
+
+### Installation
+
+1. Clone the repository
+```bash
+git clone <repository-url>
+```
+
+2. Navigate to project directory
+```bash
+cd project-bolt-sb1-jw5tfp2t/project
+```
+
+3. Install dependencies
+```bash
+pip install -r requirements.txt
+```
+
+4. Start the application
+```bash
+python main.py
+```
+
+5. Access the application at `http://127.0.0.1:5000`
+
+## 📁 Project Structure
+
+```plaintext
+project/
+├── main.py              # Core application logic
+├── templates/           # HTML templates
+├── static/             # Static assets (CSS, JS, images)
+├── logs/              # Application logs
+└── requirements.txt    # Python dependencies
+```
+
+## 💡 Key Features In-Depth
 
 ### Inventory Management
-- Add, edit, and delete products with detailed information
-- Image upload support with validation (JPG, PNG up to 5MB)
-- Real-time stock level tracking
-- Advanced product search functionality
-- Automated product ID generation
-- Track costs, prices, and profit margins
+- Add, edit, and delete inventory items
+- Track stock levels in real-time
+- Set minimum stock alerts
+- Upload product images
+- Track product performance
+
+### Sales Management
+- Process sales transactions
+- Generate digital receipts
+- Track payment status
+- Monitor sales history
+- Export sales reports
 
 ### Customer Management
-- Comprehensive customer profiles
-- Company and contact information storage
+- Maintain customer profiles
+- Track purchase history
+- Manage customer communications
+- Set customer-specific pricing
+
+## 📦 Extended Features
+
+### Advanced Inventory Management
+- Stock level alerts
+- Product categorization
+- Image upload with validation
+- Price trend tracking
+- Quick sale functionality
+- Detailed product metrics
+
+### Comprehensive Customer Management
+- Multiple customer types (Retail, Wholesale, Distributor, Corporate)
+- Credit limit management
+- Payment terms configuration
 - Purchase history tracking
-- Customer type categorization
-- Email validation and verification
+- Customer-specific pricing
 
-### Sales Processing
-- Generate unique receipt numbers automatically
-- Multiple payment method support
-- Deposit and delivery tracking
+### Sales & Receipt System
+- Digital receipt generation
+- Multiple payment methods
+- Sales history tracking
 - Reference number generation
-- Real-time sales history
-- Automatic status updates (paid/pending)
+- Batch processing capability
 
-### Security Features
-- CSRF protection
-- Secure file upload handling
-- Input validation and sanitization
-- MongoDB injection prevention
-- Error handling and logging
+## 🔍 Performance Monitoring
 
-## Technical Stack
+Monitor your system's performance with built-in tools:
+- Link performance tracking
+- Response time monitoring
+- Error logging and alerts
+- System health checks
 
-### Backend
-- Python 3.8+
-- Flask 2.3.3
-- MongoDB 4.x
-- PyMongo 4.5.0
+## 🔧 Development Setup
 
-### Frontend
-- HTML5
-- CSS3
-- JavaScript (ES6+)
-- Font Awesome Icons
+1. Set up MongoDB:
+```bash
+# Start MongoDB service
+mongod --dbpath /path/to/data/db
+```
 
-### Security & Forms
-- Flask-WTF 1.1.1
-- Werkzeug 2.3.7
-- Email validation
-
-### Development & Deployment
-- Python-dotenv 1.0.0
-- Gunicorn 21.2.0
-- DNSPython 2.4.2
-
-## Installation
-
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd project
-   ```
-
-2. Create and activate virtual environment:
-   ```bash
-   python -m venv venv
-   
-   # Windows
-   venv\Scripts\activate
-   
-   # Unix/MacOS
-   source venv/bin/activate
-   ```
+2. Set environment variables:
+```bash
+# Create .env file
+SECRET_KEY=your-secret-key
+MONGODB_URI=mongodb://localhost:27017/IMS
+```
 
 3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. Configure environment:
-   Create a .env file with:
-   ```
-   FLASK_APP=main.py
-   FLASK_ENV=development
-   SECRET_KEY=your-secure-secret-key
-   MONGO_URI=mongodb://localhost:27017/
-   ```
-
-5. Initialize MongoDB:
-   - Install MongoDB Community Edition
-   - Start MongoDB service
-   - Database will be auto-initialized on first run
-
-6. Run the application:
-   ```bash
-   # Development
-   python main.py
-
-   # Production
-   gunicorn main:app
-   ```
-
-## Project Structure
-
-```
-project/
-├── main.py                 # Application entry point and route definitions
-├── static/                 # Static assets
-│   ├── style.css          # Global styles
-│   ├── js/                # JavaScript modules
-│   │   └── checkout.js    # Sales processing logic
-│   └── uploads/           # Product images storage
-├── templates/             # HTML templates
-│   ├── base.html         # Base template with common elements
-│   ├── inventory.html    # Product inventory management
-│   ├── products.html     # Product catalog display
-│   ├── customers.html    # Customer management
-│   └── sales.html        # Sales processing interface
-└── requirements.txt      # Project dependencies
+```bash
+pip install -r requirements.txt
 ```
 
-## Configuration Options
+4. Run tests:
+```bash
+pytest
+```
 
-### Application Settings
-- `FLASK_ENV`: Set to 'development' or 'production'
-- `SECRET_KEY`: Used for session security
-- `MONGO_URI`: MongoDB connection string
-- `UPLOAD_FOLDER`: Product image storage location
-- `MAX_FILE_SIZE`: Maximum upload file size (5MB)
-- `ALLOWED_EXTENSIONS`: Permitted file types (jpg, png, jpeg)
+5. Start development server:
+```bash
+python main.py
+```
 
-### Database Collections
-- `inventory`: Product information
-- `customers`: Customer records
-- `sales`: Sales transactions
-- `purchase_history`: Customer purchase records
+## 📚 API Documentation
 
-## Development Guidelines
+### Inventory Endpoints
+- `GET /inventory` - List all inventory items
+- `POST /add_inventory` - Add new inventory item
+- `GET/POST /edit_inventory/<item_id>` - Edit inventory item
+- `GET /product/<product_id>` - Get product details
 
-### Code Style
-- Follow PEP 8 guidelines
-- Use type hints where applicable
-- Document functions and complex logic
-- Handle exceptions appropriately
+### Customer Endpoints
+- `GET /customers` - List all customers
+- `POST /add_customer` - Add new customer
+- `GET/POST /edit_customer/<customer_id>` - Edit customer details
+- `GET /customer/<customer_id>/history` - Get customer history
 
-### Database Operations
-- Use PyMongo's built-in security features
-- Implement proper indexing for performance
-- Validate data before insertion
-- Handle MongoDB connection errors gracefully
+### Sales Endpoints
+- `GET /sales` - List all sales
+- `POST /quick_sale` - Process quick sale
+- `GET /sales/print/<reference_no>` - Generate sale receipt
 
-### Security Practices
-- Validate all user inputs
-- Sanitize data before display
-- Use CSRF tokens for forms
-- Implement proper file upload validation
-- Secure session management
+## 🤝 Contributing
 
-## Production Deployment
-
-1. Configure MongoDB:
-   - Enable authentication
-   - Set up proper indexes
-   - Configure backup strategy
-
-2. Server Setup:
-   - Use Gunicorn with Nginx
-   - Enable HTTPS
-   - Configure proper logging
-   - Set up monitoring
-
-3. Environment:
-   - Set FLASK_ENV to 'production'
-   - Use strong SECRET_KEY
-   - Configure proper MONGO_URI
-   - Set up error logging
-
-## Troubleshooting
-
-Common issues and solutions:
-
-1. MongoDB Connection:
-   - Check MongoDB service status
-   - Verify connection string
-   - Ensure proper network access
-
-2. File Uploads:
-   - Verify upload directory permissions
-   - Check file size limits
-   - Validate file types
-
-3. Performance Issues:
-   - Monitor MongoDB queries
-   - Check database indexes
-   - Review application logs
-
-## Contributing
+We welcome contributions! Here's how you can help:
 
 1. Fork the repository
 2. Create a feature branch
-3. Make changes following the coding standards
-4. Write/update tests if applicable
-5. Submit a pull request
+   ```bash
+   git checkout -b feature/AmazingFeature
+   ```
+3. Commit your changes
+   ```bash
+   git commit -m 'Add some AmazingFeature'
+   ```
+4. Push to the branch
+   ```bash
+   git push origin feature/AmazingFeature
+   ```
+5. Open a Pull Request
 
-## License
+## 📄 License
 
-This project is licensed under the MIT License. See LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Support
+## 📫 Contact & Support
 
-For issues and feature requests, please use the GitHub issue tracker.
+- **Email**: [support@projectbolt.com](mailto:support@projectbolt.com)
+- **Issues**: Submit issues through our [GitHub Issues](https://github.com/yourusername/project-bolt/issues)
+- **Documentation**: [Project Wiki](https://github.com/yourusername/project-bolt/wiki)
+
+---
+
+<div align="center">
+  <p>Made with ❤️ by Team Bolt</p>
+  <p>© 2023 Project Bolt. All rights reserved.</p>
+</div>
